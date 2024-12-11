@@ -1,0 +1,1 @@
+scoreboard players set CanDragonChargeAtMobs Settings 0
