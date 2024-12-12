@@ -19,6 +19,7 @@ execute if score DisablePerch Settings matches 1 unless entity @s[nbt=!{DragonPh
 execute if score @s DragonChargeTimer matches ..0 store result score @s XVel run data get entity @s Motion[0] 1000
 execute if score @s DragonChargeTimer matches ..0 store result score @s YVel run data get entity @s Motion[1] 1000
 execute if score @s DragonChargeTimer matches ..0 store result score @s ZVel run data get entity @s Motion[2] 1000
+execute if score @s DragonChargeTimer matches ..0 run scoreboard players set @s RVel 0
 
 #Randomly charge at the player, if it is enabled
 execute at @s if score DragonCharging Settings matches 1 if entity @s[nbt=!{DragonPhase:4},nbt=!{DragonPhase:5},nbt=!{DragonPhase:6},nbt=!{DragonPhase:7},nbt=!{DragonPhase:3}] if score @s RNG <= ChargeRate Settings unless entity @s[nbt=!{HurtTime:0s}] unless score @s DragonChargeTimer matches 1.. store result score @s ChargeTargetX run data get entity @e[limit=1,sort=nearest,type=player,gamemode=!creative,gamemode=!spectator] Pos[0] 100
