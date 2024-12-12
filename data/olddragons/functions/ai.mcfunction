@@ -1,3 +1,4 @@
+tag @s add this
 execute store result score @s DragonPhase run data get entity @s DragonPhase
 #Detect if the dragon JUST spawned
 execute unless entity @s[tag=initialized] run scoreboard players set @s PerchTimer 200
@@ -18,6 +19,7 @@ execute if score DisablePerch Settings matches 1 unless entity @s[nbt=!{DragonPh
 execute if score @s DragonChargeTimer matches ..0 store result score @s XVel run data get entity @s Motion[0] 1000
 execute if score @s DragonChargeTimer matches ..0 store result score @s YVel run data get entity @s Motion[1] 1000
 execute if score @s DragonChargeTimer matches ..0 store result score @s ZVel run data get entity @s Motion[2] 1000
+execute if score @s DragonChargeTimer matches ..0 run scoreboard players set @s RVel 0
 
 #Randomly charge at the player, if it is enabled
 execute at @s if score DragonCharging Settings matches 1 if entity @s[nbt=!{DragonPhase:4},nbt=!{DragonPhase:5},nbt=!{DragonPhase:6},nbt=!{DragonPhase:7},nbt=!{DragonPhase:3}] if score @s RNG <= ChargeRate Settings unless entity @s[nbt=!{HurtTime:0s}] unless score @s DragonChargeTimer matches 1.. store result score @s ChargeTargetX run data get entity @e[limit=1,sort=nearest,type=player,gamemode=!creative,gamemode=!spectator] Pos[0] 100
@@ -72,11 +74,10 @@ execute if data entity @s {DragonPhase:9} at @s run tag @e[type=marker,limit=1,t
 
 
 #Stop charging if too far away from target position or is done charging
-execute at @s if entity @e[limit=1,sort=nearest,distance=..12.5,tag=DragonChargeTarget] run scoreboard players remove @s DragonChargeTimer 1
+execute at @s if entity @e[limit=1,sort=nearest,distance=..5,tag=DragonChargeTarget] run scoreboard players remove @s DragonChargeTimer 1
 execute at @s unless entity @e[limit=1,sort=nearest,distance=..125,tag=DragonChargeTarget] run scoreboard players set @s DragonChargeTimer 0
 
 #Charge
-execute unless data entity @s {DragonPhase:5} unless data entity @s {DragonPhase:6} unless data entity @s {DragonPhase:7} at @s if score @s DragonChargeTimer matches 1.. run function olddragons:charging/charge
 execute unless data entity @s {DragonPhase:5} unless data entity @s {DragonPhase:6} unless data entity @s {DragonPhase:7} at @s if score @s DragonChargeTimer matches 1.. run function olddragons:charging/calcfly with storage olddragons
 
 #Fix vertical flying, if enabled
@@ -87,3 +88,4 @@ tag @e remove DragonTarget
 
 
 kill @e[type=marker,tag=DragonChargeTarget]
+tag @s remove this
