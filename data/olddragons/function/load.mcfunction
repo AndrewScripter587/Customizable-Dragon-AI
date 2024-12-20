@@ -90,7 +90,7 @@ scoreboard players set ChargeFlySpeed Settings 125
 scoreboard players set BedrockStyle Settings 0
 #Setting to make area effect clouds act more like bedrock edition. As for how this relates to the ender dragon, dragon fireballs when they hit something and the breath attack spawn area effect clouds. This also makes dragon's breath area effect clouds work like in bedrock edition where they last forever and also stay the same size.
 scoreboard players set BedrockAEClouds Settings 0
-function olddragons:settings/1.8
+function olddragons:settings/1.9
 execute store result score Supported Temp run function olddragons:supportedtest
 
 #Display a message saying the pack loaded successfully
