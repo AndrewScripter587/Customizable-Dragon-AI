@@ -7,7 +7,8 @@ scoreboard players set ChargeRate Settings 5
 scoreboard players set DragonCharging Settings 0
 scoreboard players set BedrockStyle Settings 1
 scoreboard players set FlySpeed Settings 900
-scoreboard players set ChargeFlySpeed Settings 500
+scoreboard players set ChargeFlySpeed Settings 100
 scoreboard players set VerticalSmoothing Settings 20
 scoreboard players set Slowdown Settings 15
-
+scoreboard players set UseEnhancedAI Settings 0
+function olddragons:config

@@ -33,6 +33,8 @@ scoreboard objectives add Rotation dummy
 scoreboard objectives add VelRotation dummy
 scoreboard objectives add TargetDistance dummy
 scoreboard objectives add CrystalHeight dummy
+scoreboard objectives add EnhancedAIPhase dummy
+scoreboard objectives add Cycles dummy
 #Charging Target
 scoreboard objectives add ChargeTargetX dummy
 scoreboard objectives add ChargeTargetY dummy
@@ -65,6 +67,8 @@ scoreboard players set HorizontalSmoothing Settings 10
 scoreboard players set VerticalSmoothing Settings 10
 #Setting to make the dragon perch more often
 scoreboard players set MorePerching Settings 1
+#Setting to disable perching.
+scoreboard players set DisablePerching Settings 0
 #Setting to fix the dragon's vertical movement
 scoreboard players set FixVertical Settings 1
 #Setting for how much knockback vertically the dragon should take when it gets damaged. 100 = 1 block per tick. 1 = 0.01 (1/100) block per tick. Vertical velocity increases by this number for every tick the dragon is "taking damage" (aka tinted red by recieving damage)
@@ -86,11 +90,21 @@ scoreboard players set FlyHeightPillar Settings 50
 scoreboard players set FlySpeed Settings 900
 #Setting for how fast the dragon will move up and down while charging, as a percent of normal FlySpeed.
 scoreboard players set ChargeFlySpeed Settings 125
-#Setting to make the dragon use the charging code for other things (currently limited to preparing to shoot fireballs). Makes the dragon feel a lot more like Bedrock Edition if other settings are set a certain way.
+#Unused, for now.
 scoreboard players set BedrockStyle Settings 0
 #Setting to make area effect clouds act more like bedrock edition. As for how this relates to the ender dragon, dragon fireballs when they hit something and the breath attack spawn area effect clouds. This also makes dragon's breath area effect clouds work like in bedrock edition where they last forever and also stay the same size.
 scoreboard players set BedrockAEClouds Settings 0
-function olddragons:settings/1.9
+#Setting to make the dragon stop charging whenever it takes damage.
+scoreboard players set StopChargeOnHurt Settings 0
+#Setting for whether or not the custom "enhanced" ai should be used.
+scoreboard players set UseEnhancedAI Settings 0
+#Setting for the mode of the enhanced ai
+scoreboard players set EnhancedAIMode Settings 1
+#Amount of "flight cycles" a dragon in phase 0 will go through before changing its phase to another.
+scoreboard players set FlightCyclesBeforePhaseChange Settings 1
+
+
+function olddragons:settings/loadpreset
 execute store result score Supported Temp run function olddragons:supportedtest
 
 #Display a message saying the pack loaded successfully

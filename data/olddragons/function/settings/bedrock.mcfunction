@@ -11,3 +11,5 @@ scoreboard players set HorizontalSmoothing Settings 50
 scoreboard players set Slowdown Settings 15
 scoreboard players set ChargeFlySpeed Settings 140
 scoreboard players set MimicVanillaCharging Settings 1
+scoreboard players set UseEnhancedAI Settings 0
+function olddragons:config

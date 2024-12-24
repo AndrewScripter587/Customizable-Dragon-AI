@@ -12,3 +12,4 @@ scoreboard players set VerticalSmoothing Settings 10
 scoreboard players set HorizontalSmoothing Settings 20
 scoreboard players set Slowdown Settings 15
 scoreboard players set MimicVanillaCharging Settings 0
+function olddragons:config
