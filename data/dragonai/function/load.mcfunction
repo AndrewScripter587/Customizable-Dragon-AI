@@ -1,5 +1,5 @@
 #Display a message saying the pack is loading
-tellraw @a {"text":"Old Dragon Mechanics is loading...","color":"yellow"}
+tellraw @a {"text":"Customizable Dragon AI is loading...","color":"yellow"}
 
 #Create a "top of 0, 0" marker in all three dimensions.
 execute positioned 0 0 0 in minecraft:overworld unless entity @e[type=marker,tag=center,distance=0..] run summon marker ~ ~ ~ {Tags:["center"]}
@@ -108,5 +108,5 @@ function dragonai:settings/loadpreset
 execute store result score Supported Temp run function dragonai:supportedtest
 
 #Display a message saying the pack loaded successfully
-tellraw @a {"text":"Old Dragon Mechanics has been enabled!","color":"green"}
+tellraw @a {"text":"Customizable Dragon AI has been enabled!","color":"green"}
 schedule function dragonai:help 3s
