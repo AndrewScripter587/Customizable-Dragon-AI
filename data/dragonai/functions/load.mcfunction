@@ -8,6 +8,7 @@ execute positioned 0 0 0 in minecraft:the_end unless entity @e[type=marker,tag=c
 
 
 #Create the objectives
+scoreboard objectives add disablestartup trigger
 scoreboard objectives add RNG dummy
 scoreboard objectives add DragonChargeTimer dummy
 scoreboard objectives add Settings dummy
@@ -43,6 +44,8 @@ scoreboard objectives add ChargeTargetZ dummy
 scoreboard objectives add DragonPhase dummy
 
 scoreboard objectives add odconfig trigger
+
+scoreboard players enable @a disablestartup
 
 scoreboard players set FrictionUpperFraction Settings 1
 scoreboard players set FrictionLowerFraction Settings 1
