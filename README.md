@@ -1,4 +1,4 @@
-**Customizable Dragon AI**
+# Customizable Dragon AI
 
 A Minecraft 1.20.2-1.21.4 datapack to allow configuration of the Ender Dragon AI and also restore old dragon mechanics, like the ender dragon charging at the player mid-flight.
 
