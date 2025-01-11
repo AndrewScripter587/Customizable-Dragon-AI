@@ -14,8 +14,6 @@ execute if score UseEnhancedAI Settings matches 0 run scoreboard players operati
 #Prevent the 1.9 mechanics from occurring, unless it is enabled
 execute if score Allow1.9Behavior Settings matches 0 unless entity @s[nbt=!{DragonPhase:1},nbt=!{DragonPhase:2},nbt=!{DragonPhase:10},nbt=!{DragonPhase:3},nbt=!{DragonPhase:5},nbt=!{DragonPhase:6},nbt=!{DragonPhase:7}] unless entity @s[nbt=!{HurtTime:0s}] run data merge entity @s {DragonPhase:0}
 
-#Prevent perching, if disabled
-execute if score DisablePerching Settings matches 1 unless entity @s[nbt=!{DragonPhase:3},nbt=!{DragonPhase:5},nbt=!{DragonPhase:6},nbt=!{DragonPhase:7}] unless entity @s[nbt=!{HurtTime:0s}] run data merge entity @s {DragonPhase:0}
 
 #Store motion in scores for reference when starting a charge
 execute if score @s DragonChargeTimer matches ..0 store result score @s XVel run data get entity @s Motion[0] 1000
@@ -46,6 +44,11 @@ execute unless entity @s[nbt=!{DragonPhase:4},nbt=!{DragonPhase:5},nbt=!{DragonP
 #Replace vanilla charging, if enabled
 execute if score ReplaceVanillaCharging Settings matches 1 if entity @s[nbt={DragonPhase:8}] unless entity @s[nbt=!{HurtTime:0s}] unless score @s DragonChargeTimer matches 1.. run scoreboard players set @s DragonChargeTimer 15
 execute if score ReplaceVanillaCharging Settings matches 1 if entity @s[nbt={DragonPhase:8}] run data modify entity @s DragonPhase set value 0
+
+#Prevent individual vanilla mechanics, if any enabled
+execute if score DisableVanillaCharge Settings matches 1 if entity @s[nbt={DragonPhase:8}] run data modify entity @s DragonPhase set value 0
+execute if score DisablePerching Settings matches 1 unless entity @s[nbt=!{DragonPhase:3},nbt=!{DragonPhase:5},nbt=!{DragonPhase:6},nbt=!{DragonPhase:7}] unless entity @s[nbt=!{HurtTime:0s}] run data merge entity @s {DragonPhase:0}
+
 
 #Dragon charging mechanics
 
