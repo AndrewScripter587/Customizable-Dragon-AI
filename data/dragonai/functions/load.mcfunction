@@ -1,6 +1,7 @@
 #Display a message saying the pack is loading
 tellraw @a {"text":"Customizable Dragon AI is loading...","color":"yellow"}
 
+function verdetect:load
 #Create a "top of 0, 0" marker in all three dimensions.
 execute positioned 0 0 0 in minecraft:overworld unless entity @e[type=marker,tag=center,distance=0..] run summon marker ~ ~ ~ {Tags:["center"]}
 execute positioned 0 0 0 in minecraft:the_nether unless entity @e[type=marker,tag=center,distance=0..] run summon marker ~ ~ ~ {Tags:["center"]}
