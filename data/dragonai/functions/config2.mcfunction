@@ -20,7 +20,7 @@ tellraw @s ""
 tellraw @s ""
 tellraw @s ""
 
-tellraw @s [{"text":"[1]","color":"red","hoverEvent":{"action":"show_text","contents":"Go to page 1"},"clickEvent":{"action":"run_command","value":"/function dragonai:config"}},{"text":"[2]","color":"green","hoverEvent":{"action":"show_text","contents":"Go to page 2 \n\n\n§aYou are already on this page!§r"}}]
+tellraw @s [{"text":"[1]","color":"red","hoverEvent":{"action":"show_text","contents":"Go to page 1"},"clickEvent":{"action":"run_command","value":"/function dragonai:config"}},{"text":"[2]","color":"green","hoverEvent":{"action":"show_text","contents":"Go to page 2. §aYou are already on this page!§r"}}]
 tellraw @s [{"text":"[Beta Features]","hoverEvent":{"action":"show_text","contents":"Opens a new config for BETA features"},"clickEvent":{"action":"run_command","value":"/function dragonai:betaconfig"}}]
 
 tellraw @s [{"text":"[Reload Config Screen]","hoverEvent":{"action":"show_text","contents":"Re-opens the config. Use this in certain cases where the config doesn't update itself."},"clickEvent":{"action":"run_command","value":"/function dragonai:config2"}},{"text":" "},{"text":"§4[Reload ALL Datapacks]§r","hoverEvent":{"action":"show_text","contents":"Reloads ALL datapacks, including this one. Doesn't do anything on bukkit/spigot/purpur/paper/etc. servers, as this runs /reload, triggering bukkit's plugins reload warning instead, you'll need to use /minecraft:reload instead."},"clickEvent":{"action":"run_command","value":"/reload"}}]
