@@ -12,5 +12,6 @@ execute if score MinecraftVersion VersionInfo matches 10 run tellraw @s "Detecte
 execute if score MinecraftVersion VersionInfo matches 11 run tellraw @s "Detected Server Version: 1.21-1.21.1"
 execute if score MinecraftVersion VersionInfo matches 12 run tellraw @s "Detected Server Version: 1.21.2-1.21.3"
 execute if score MinecraftVersion VersionInfo matches 13 run tellraw @s "Detected Server Version: 1.21.4+"
-execute if score MinecraftVersion VersionInfo matches 14 run tellraw @s "Detected Server Version: 1.21.5 Snapshot (25w02a+)"
+execute if score MinecraftVersion VersionInfo matches 14 run tellraw @s "Detected Server Version: 1.21.5 Snapshot (25w02a)"
+execute if score MinecraftVersion VersionInfo matches 15 run tellraw @s "Detected Server Version: 1.21.5 Snapshot (25w03a)"
 execute if score IsBukkit VersionInfo matches 1 run tellraw @s "Detected Server Software: Bukkit/Spigot/Paper/Purpur"
