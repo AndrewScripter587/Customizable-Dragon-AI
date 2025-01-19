@@ -108,7 +108,7 @@ scoreboard players set EnhancedAIMode Settings 1
 scoreboard players set FlightCyclesBeforePhaseChange Settings 1
 
 
-function dragonai:settings/loadpreset
+function #dragonai:defaults
 execute store result score Supported Temp run function dragonai:supportedtest
 
 #Display a message saying the pack loaded successfully
