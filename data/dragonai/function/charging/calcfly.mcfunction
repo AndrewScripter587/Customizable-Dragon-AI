@@ -27,7 +27,7 @@ execute store result entity @s Motion[0] double 0.001 run scoreboard players ope
 execute store result entity @s Motion[1] double 0.001 run scoreboard players operation @s YVel += @s YVelDiff
 execute store result entity @s Motion[2] double 0.001 run scoreboard players operation @s ZVel += @s ZVelDiff
 function dragonai:velocitymarker
-execute store result entity @s Rotation[0] float 0.01 run scoreboard players get @s Rotation
+#execute store result entity @s Rotation[0] float 0.01 run scoreboard players get @s Rotation
 kill @e[tag=TargetVelHoriz,type=marker]
 kill @e[tag=TargetVelVert,type=marker]
 tag @e remove thisdragon

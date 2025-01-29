@@ -1,6 +1,6 @@
-scoreboard players set ST Temp 4000
+scoreboard players set ST Temp 1600
 scoreboard players set B Temp 1000
-scoreboard players set F Temp 1075
+scoreboard players set F Temp 1125
 #data modify entity @s DragonPhase set value 0
 execute if score EnableDebug Settings matches 1 at @s run particle minecraft:campfire_signal_smoke ~ ~ ~ 0 0 0 0 2 force
 execute if score EnableDebug Settings matches 1 at @s rotated ~ 0 run particle minecraft:campfire_cosy_smoke ^ ^ ^-10 0 0 0 0 0 force
@@ -14,10 +14,10 @@ execute if score EnableDebug Settings matches 1 as @e[tag=SmoothTurn,type=marker
 execute at @s as @e[tag=DragonChargeTarget,limit=1,sort=nearest] at @s run tag @e[tag=SmoothTurn,type=marker,limit=1,sort=nearest] add Closest
 #execute at @s as @e[tag=DragonChargeRotation,type=marker] facing entity @e[tag=SmoothTurn,type=marker,limit=1,sort=nearest,tag=Closest] eyes rotated ~180 ~ run tp @s ^ ^ ^ ~ ~
 execute at @s as @e[tag=DragonChargeRotation,type=marker,limit=1,sort=nearest] facing entity @e[tag=DragonChargeTarget] eyes rotated ~180 ~ run tp @s ^ ^ ^ ~ ~
-execute if entity @e[type=marker,tag=SmoothTurn,tag=Closest,tag=Right,tag=Far] at @s run scoreboard players add @s RVel 75
+execute if entity @e[type=marker,tag=SmoothTurn,tag=Closest,tag=Right,tag=Far] at @s run scoreboard players add @s RVel 125
 execute if entity @e[type=marker,tag=SmoothTurn,tag=Closest,tag=Right] at @s run scoreboard players add @s RVel 45
 execute if entity @e[type=marker,tag=SmoothTurn,tag=Closest,tag=Left] at @s run scoreboard players remove @s RVel 45
-execute if entity @e[type=marker,tag=SmoothTurn,tag=Closest,tag=Left,tag=Far] at @s run scoreboard players remove @s RVel 75
+execute if entity @e[type=marker,tag=SmoothTurn,tag=Closest,tag=Left,tag=Far] at @s run scoreboard players remove @s RVel 125
 scoreboard players operation @s RVel *= B Temp
 scoreboard players operation @s RVel /= F Temp
 execute if entity @e[type=marker,tag=SmoothTurn,tag=Closest,tag=NoTurn] at @s run scoreboard players operation @s RVel *= B Temp
