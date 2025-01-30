@@ -113,4 +113,4 @@ execute store result score Supported Temp run function dragonai:supportedtest
 
 #Display a message saying the pack loaded successfully
 tellraw @a {"text":"Customizable Dragon AI has been enabled!","color":"green"}
-schedule function dragonai:help 3s
+#schedule function dragonai:welcome 3s
