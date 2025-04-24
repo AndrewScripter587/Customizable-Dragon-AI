@@ -1,0 +1,65 @@
+dir charging {
+    function calcfly {
+        execute at @s run function ./charge
+        scoreboard players set SM Temp 2
+        execute at @s run tag @e[tag=DragonChargeRotation,type=marker,limit=1,sort=nearest] add thisdragon
+        execute at @s facing entity @e[type=marker,limit=1,sort=nearest,tag=DragonChargeTarget] feet positioned 0.0 0.0 0.0 positioned ^ ^ ^0 rotated as @s positioned ^ ^ ^-1 run summon marker ~ ~ ~ {Tags:["TargetVelHoriz"]}
+        execute at @s facing entity @e[type=marker,limit=1,sort=nearest,tag=DragonChargeTarget] feet positioned 0.0 0.0 0.0 positioned ^ ^ ^1 rotated as @s positioned ^ ^ ^0 run summon marker ~ ~ ~ {Tags:["TargetVelVert"]}
+        execute store result score @s TargetXVel run data get entity @e[limit=1,sort=nearest,type=marker,tag=TargetVelHoriz] Pos[0] 900
+        $execute store result score @s TargetYVel run data get entity @e[limit=1,sort=nearest,type=marker,tag=TargetVelVert] Pos[1] $(ChargeFlySpeed)
+        execute store result score @s TargetZVel run data get entity @e[limit=1,sort=nearest,type=marker,tag=TargetVelHoriz] Pos[2] 900
+
+
+        scoreboard players operation @s XVelDiff = @s TargetXVel
+        scoreboard players operation @s XVelDiff -= @s XVel
+        scoreboard players operation @s XVelDiff *= SM Temp
+        scoreboard players operation @s XVelDiff /= HorizontalSmoothing Settings
+
+        scoreboard players operation @s YVelDiff = @s TargetYVel
+        scoreboard players operation @s YVelDiff -= @s YVel
+        scoreboard players operation @s YVelDiff *= SM Temp
+        scoreboard players operation @s YVelDiff /= VerticalSmoothing Settings
+
+        scoreboard players operation @s ZVelDiff = @s TargetZVel
+        scoreboard players operation @s ZVelDiff -= @s ZVel
+        scoreboard players operation @s ZVelDiff *= SM Temp
+        scoreboard players operation @s ZVelDiff /= HorizontalSmoothing Settings
+
+        execute store result entity @s Motion[0] double 0.001 run scoreboard players operation @s XVel += @s XVelDiff
+        execute store result entity @s Motion[1] double 0.001 run scoreboard players operation @s YVel += @s YVelDiff
+        execute store result entity @s Motion[2] double 0.001 run scoreboard players operation @s ZVel += @s ZVelDiff
+        function ../velocitymarker
+        #execute store result entity @s Rotation[0] float 0.01 run scoreboard players get @s Rotation
+        kill @e[tag=TargetVelHoriz,type=marker]
+        kill @e[tag=TargetVelVert,type=marker]
+        tag @e remove thisdragon
+    }
+    function charge {
+        scoreboard players set ST Temp 1600
+        scoreboard players set B Temp 1000
+        scoreboard players set F Temp 1125
+        execute if score EnableDebug Settings matches 1 at @s run particle minecraft:campfire_signal_smoke ~ ~ ~ 0 0 0 0 2 force
+        execute if score EnableDebug Settings matches 1 at @s rotated ~ 0 run particle minecraft:campfire_cosy_smoke ^ ^ ^-10 0 0 0 0 0 force
+        execute store result entity @e[type=marker,limit=1,sort=nearest,tag=DragonChargeRotation] Rotation[0] float 0.01 run scoreboard players get @s Rotation
+        execute at @e[type=marker,limit=1,sort=nearest,tag=DragonChargeRotation] rotated ~115 0 run summon marker ^ ^ ^-1 {Tags:["SmoothTurn","Right","Far"]}
+        execute at @e[type=marker,limit=1,sort=nearest,tag=DragonChargeRotation] rotated ~10 0 run summon marker ^ ^ ^-1 {Tags:["SmoothTurn","Right"]}
+        execute at @e[type=marker,limit=1,sort=nearest,tag=DragonChargeRotation] rotated ~0 0 run summon marker ^ ^ ^-1 {Tags:["SmoothTurn","NoTurn"]}
+        execute at @e[type=marker,limit=1,sort=nearest,tag=DragonChargeRotation] rotated ~-10 0 run summon marker ^ ^ ^-1 {Tags:["SmoothTurn","Left"]}
+        execute at @e[type=marker,limit=1,sort=nearest,tag=DragonChargeRotation] rotated ~-115 0 run summon marker ^ ^ ^-1 {Tags:["SmoothTurn","Left","Far"]}
+        execute if score EnableDebug Settings matches 1 as @e[tag=SmoothTurn,type=marker] at @s run particle electric_spark ~ ~0.5 ~ 0 0 0 0 0 force
+        execute at @s as @e[tag=DragonChargeTarget,limit=1,sort=nearest] at @s run tag @e[tag=SmoothTurn,type=marker,limit=1,sort=nearest] add Closest
+        execute at @s as @e[tag=DragonChargeRotation,type=marker,limit=1,sort=nearest] facing entity @e[tag=DragonChargeTarget] eyes rotated ~180 ~ run tp @s ^ ^ ^ ~ ~
+        execute if entity @e[type=marker,tag=SmoothTurn,tag=Closest,tag=Right,tag=Far] at @s run scoreboard players add @s RVel 125
+        execute if entity @e[type=marker,tag=SmoothTurn,tag=Closest,tag=Right] at @s run scoreboard players add @s RVel 45
+        execute if entity @e[type=marker,tag=SmoothTurn,tag=Closest,tag=Left] at @s run scoreboard players remove @s RVel 45
+        execute if entity @e[type=marker,tag=SmoothTurn,tag=Closest,tag=Left,tag=Far] at @s run scoreboard players remove @s RVel 125
+        scoreboard players operation @s RVel *= B Temp
+        scoreboard players operation @s RVel /= F Temp
+        execute if entity @e[type=marker,tag=SmoothTurn,tag=Closest,tag=NoTurn] at @s run scoreboard players operation @s RVel *= B Temp
+        execute if entity @e[type=marker,tag=SmoothTurn,tag=Closest,tag=NoTurn] at @s run scoreboard players operation @s RVel /= ST Temp
+        scoreboard players operation @s Rotation += @s RVel
+        execute store result entity @s Rotation[0] float 0.01 run scoreboard players get @s Rotation
+        kill @e[tag=SmoothTurn,type=marker]
+        tag @e remove Closest
+    }
+}

@@ -1,0 +1,13 @@
+#prefixed with a z to move these functions to the bottom of the /function autocomplete list in game
+
+import ./z_configmenu.mcbt
+
+tag functions on_config_button_press {
+    dragonai:enforce_locked_settings
+}
+
+function run_and_return {
+    $$(cmd)
+    function #z_configmenu:on_config_button_press
+    $$(return)
+}
