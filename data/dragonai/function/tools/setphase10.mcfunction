@@ -1,2 +1,4 @@
-data merge entity @s {DragonPhase:0}
-data merge entity @s {DragonPhase:10}
+# Generated with MC-Build
+
+data modify entity @s[type=ender_dragon] DragonPhase set value 0
+data modify entity @s[type=ender_dragon] DragonPhase set value 10

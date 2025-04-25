@@ -1,6 +1,7 @@
 {
     "pack": {
-        "pack_format": 26,
+        "pack_format": 71,
+        "supported_formats": [26,72],
         "description": "Modify the Ender Dragon AI!"
     }
 }

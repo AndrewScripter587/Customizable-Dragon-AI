@@ -1,3 +1,0 @@
-$execute if score MinecraftVersion VersionInfo matches 14 run function dragonai:configmenu/numericinputnew {showtextname:"text",name:"$(name)",id:"$(id)",returnto:"$(returnto)",hovertext:"$(hovertext)",extrajson:"$(extrajson)",step:$(step)}
-$execute if score MinecraftVersion VersionInfo matches 15.. run function dragonai:configmenu/numericinputnew {showtextname:"value",name:"$(name)",id:"$(id)",returnto:"$(returnto)",hovertext:"$(hovertext)",extrajson:"$(extrajson)",step:$(step)}
-$execute if score MinecraftVersion VersionInfo matches ..13 run function dragonai:configmenu/numericinputold {name:"$(name)",id:"$(id)",returnto:"$(returnto)",hovertext:"$(hovertext)",extrajson:"$(extrajson)",step:$(step)}

@@ -1,0 +1,11 @@
+template phase {
+    with id:int {
+        data modify entity @s[type=ender_dragon] DragonPhase set value <%id%>
+    }
+}
+
+template feedback {
+    with text:raw {
+        tellraw @s <%text%>
+    }
+}

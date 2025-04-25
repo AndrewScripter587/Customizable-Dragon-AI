@@ -1,3 +1,5 @@
+# Generated with MC-Build
+
 $execute store result storage dragonai:tmp x double 1 run random value $(xl)..$(xh)
 $execute store result storage dragonai:tmp y double 1 run random value $(yl)..$(yh)
 $execute store result storage dragonai:tmp z double 1 run random value $(zl)..$(zh)

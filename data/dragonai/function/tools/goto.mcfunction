@@ -1,3 +1,5 @@
+# Generated with MC-Build
+
 execute if entity @s[type=!ender_dragon] run return 0
 scoreboard players set @s DragonChargeTimer 1
 $summon marker $(x) $(y) $(z) {Tags:["goto"]}

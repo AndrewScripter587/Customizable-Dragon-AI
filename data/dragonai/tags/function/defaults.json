@@ -1,5 +1,1 @@
-{
-        "values": [
-        "dragonai:settings/loadpreset"
-    ]
-}
+{"values":["dragonai:presets/loadpreset"]}
