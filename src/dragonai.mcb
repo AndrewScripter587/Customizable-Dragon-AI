@@ -15,8 +15,8 @@ import ./z_configmenu.mcbt
         Phase_DYING = 9
         Phase_DEFAULT = 10
         Phase_NOAI = 10
-        //Compile using pre-1.21.5 tellraw commands
-        $1_21_4compile = false
+        //Compile for specific version
+        $compilever = "1.21.5"
 %%>
 
 dir charging {
@@ -304,7 +304,7 @@ function load minecraft:load {
     execute positioned 0 0 0 in minecraft:overworld unless entity @e[type=marker,tag=center,distance=0..] run summon marker ~ ~ ~ {Tags:["center"]}
     execute positioned 0 0 0 in minecraft:the_nether unless entity @e[type=marker,tag=center,distance=0..] run summon marker ~ ~ ~ {Tags:["center"]}
     execute positioned 0 0 0 in minecraft:the_end unless entity @e[type=marker,tag=center,distance=0..] run summon marker ~ ~ ~ {Tags:["center"]}
-
+    schedule function dragonai:misc/detect-oldcombat 5s
     # MC-Build objective
     scoreboard objectives add mcb.internal dummy
 
@@ -424,6 +424,16 @@ function load minecraft:load {
 
 tag functions defaults {
     dragonai:presets/loadpreset
+}
+
+dir misc {
+    function detect-oldcombat {
+        execute store success score HasOldCombat Temp run scoreboard objectives setdisplay sidebar.team.yellow OldCombatSettings
+        execute if score HasOldCombat Temp matches 1 run {
+            dragonai.LOGGER log ["Old Combat Datapack detected. I recommend the use of the Customizable Dragon AI 1.8 Preset for the old dragon fight experience. ",{text:"[Click Here to use the preset.]",click_event:{action:"run_command",command:"function dragonai:presets/1.8-recommend"},color:yellow}]
+        }
+        scoreboard objectives setdisplay sidebar.team.yellow
+    }
 }
 
 function tick minecraft:tick {
@@ -623,6 +633,24 @@ dir presets {
         function dragonai:config
 
     }
+    function 1.8-recommend {
+        # Beta 1.9 - Release 1.8.9 DragonAISettings preset
+        scoreboard players set Allow1.9Behavior DragonAISettings 0
+        scoreboard players set FixVertical DragonAISettings 1
+        scoreboard players set ReplaceVanillaCharging DragonAISettings 1
+        scoreboard players set ChargeRate DragonAISettings 5
+        scoreboard players set FrequentPerching DragonAISettings 0
+        scoreboard players set BedrockStyle DragonAISettings 0
+        scoreboard players set DragonCharging DragonAISettings 1
+        scoreboard players set MimicVanillaCharge DragonAISettings 0
+        scoreboard players set FlySpeed DragonAISettings 900
+        scoreboard players set ChargeFlySpeed DragonAISettings 100
+        scoreboard players set VerticalSmoothing DragonAISettings 25
+        scoreboard players set HorizontalSmoothing DragonAISettings 15
+        scoreboard players set Slowdown DragonAISettings 10
+        scoreboard players set UseEnhancedAI DragonAISettings 0
+
+    }
     function loadpreset {
         # 1.9-1.13.2 preset
         # Run on pack load
@@ -642,3 +670,24 @@ dir presets {
     }
 }
 
+dir logger_manual {
+    function log {
+        dragonai.LOGGER macro log $(text)
+    }
+    function warn {
+        dragonai.LOGGER macro warn $(text)
+    }
+    function error {
+        dragonai.LOGGER macro error $(text)
+    }
+    function except {
+        dragonai.LOGGER macro except $(text)
+    }
+    function fatal {
+        dragonai.LOGGER macro fatal $(text)
+    }
+    function debug {
+        dragonai.LOGGER macro debug $(text)
+    }
+
+}

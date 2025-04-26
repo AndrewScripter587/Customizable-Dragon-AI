@@ -9,3 +9,42 @@ template feedback {
         tellraw @s <%text%>
     }
 }
+
+template dragonai.LOGGER {
+    with log json:raw {
+        tellraw @a ["§2[Customizable Dragon AI - INFO]: §r",<%json%>]
+    }
+    with warn json:raw {
+        tellraw @a ["§6[Customizable Dragon AI - WARN]: ",<%json%>]
+    }
+    with error json:raw {
+        tellraw @a ["§c[Customizable Dragon AI - ERROR]: ",<%json%>]
+    }
+    with except json:raw {
+        tellraw @a ["§4[§cCustomizable Dragon AI - EXCEPTION§4]: Exception recieved: ",<%json%>]
+    }
+    with fatal json:raw {
+        tellraw @a ["§4[Customizable Dragon AI - FATAL]: ",<%json%>]
+    }
+    with debug json:raw {
+        tellraw @a [["§e[",{text:"Customizable Dragon AI - DEBUG", color:"#dbc791"},"§e]: §r"],<%json%>]
+    }
+    with macro log json:raw {
+        $tellraw @a ["§2[Customizable Dragon AI - INFO]: §r",<%json%>]
+    }
+    with macro warn json:raw {
+        $tellraw @a ["§6[Customizable Dragon AI - WARN]: ",<%json%>]
+    }
+    with macro error json:raw {
+        $tellraw @a ["§c[Customizable Dragon AI - ERROR]: ",<%json%>]
+    }
+    with macro except json:raw {
+        $tellraw @a ["§4[§cCustomizable Dragon AI - EXCEPTION§4]: Exception recieved: ",<%json%>]
+    }
+    with macro fatal json:raw {
+        $tellraw @a ["§4[Customizable Dragon AI - FATAL]: ",<%json%>]
+    }
+    with macro debug json:raw {
+        $tellraw @a [["§e[",{text:"Customizable Dragon AI - DEBUG", color:"#dbc791"},"§e]: §r"],<%json%>]
+    }
+}

@@ -3,3 +3,5 @@
 *.bat
 data.old/
 data/
+*.mcfunction
+*.mcfunction
