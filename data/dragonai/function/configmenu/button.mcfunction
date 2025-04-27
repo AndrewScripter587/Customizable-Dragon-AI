@@ -1,1 +1,0 @@
-$tellraw @s {"text":"[$(text)]","hoverEvent":{"action":"show_text","contents":{"text":"$(hovertext)"}},"clickEvent":{"action":"run_command","value":"$(clickCommand)"}}
