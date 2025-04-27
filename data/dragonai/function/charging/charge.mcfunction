@@ -4,7 +4,7 @@
 scoreboard players set ST Temp 2000
 scoreboard players set B Temp 1000
 scoreboard players set F Temp 1125
-scoreboard players set WR Temp 200
+scoreboard players set WR Temp 500
 scoreboard players set 100 Temp 100
 execute if score EnableDebug DragonAISettings matches 1 at @s run particle minecraft:campfire_signal_smoke ~ ~ ~ 0 0 0 0 2 force
 execute if score EnableDebug DragonAISettings matches 1 at @s rotated ~ 0 run particle minecraft:campfire_cosy_smoke ^ ^ ^-10 0 0 0 0 0 force
@@ -23,8 +23,9 @@ execute if entity @e[type=marker,tag=SmoothTurn,tag=Closest,tag=Right] at @s run
 execute if entity @e[type=marker,tag=SmoothTurn,tag=Closest,tag=Left] at @s run scoreboard players remove @s RVel 90
 execute if entity @e[type=marker,tag=SmoothTurn,tag=Closest,tag=Left,tag=Far] at @s run scoreboard players remove @s RVel 125
 execute if entity @e[type=marker,tag=SmoothTurn,tag=Closest,tag=Behind] at @s if score @s RVel matches 0 run scoreboard players add @s RVel 10
-execute if entity @e[type=marker,tag=SmoothTurn,tag=Closest,tag=Behind] at @s run scoreboard players operation @s RVel *= WR Temp
-execute if entity @e[type=marker,tag=SmoothTurn,tag=Closest,tag=Behind] at @s run scoreboard players operation @s RVel /= 100 Temp
+execute if entity @e[type=marker,tag=SmoothTurn,tag=Closest,tag=Behind] at @s if score @s RVel matches 1.. run scoreboard players operation @s RVel += WR Temp
+execute if entity @e[type=marker,tag=SmoothTurn,tag=Closest,tag=Behind] at @s if score @s RVel matches ..-1 run scoreboard players operation @s RVel -= WR Temp
+# execute if entity @e[type=marker,tag=SmoothTurn,tag=Closest,tag=Behind] at @s run scoreboard players operation @s RVel /= 100 Temp
 scoreboard players operation @s RVel *= B Temp
 scoreboard players operation @s RVel /= F Temp
 execute if entity @e[type=marker,tag=SmoothTurn,tag=Closest,tag=NoTurn] at @s run scoreboard players operation @s RVel *= B Temp

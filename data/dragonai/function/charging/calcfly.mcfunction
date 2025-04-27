@@ -6,9 +6,9 @@ scoreboard players set SM Temp 5
 execute at @s run tag @e[tag=DragonChargeRotation,type=marker,limit=1,sort=nearest] add thisdragon
 execute at @s facing entity @e[type=marker,limit=1,sort=nearest,tag=DragonChargeTarget] feet rotated ~ 0 positioned 0.0 0.0 0.0 positioned ^ ^ ^0 rotated as @s positioned ^ ^ ^-1 run summon marker ~ ~ ~ {Tags:["TargetVelHoriz"]}
 execute at @s facing entity @e[type=marker,limit=1,sort=nearest,tag=DragonChargeTarget] feet positioned 0.0 0.0 0.0 positioned ^ ^ ^1 rotated as @s positioned ^ ^ ^0 run summon marker ~ ~ ~ {Tags:["TargetVelVert"]}
-execute store result score @s TargetXVel run data get entity @e[limit=1,sort=nearest,type=marker,tag=TargetVelHoriz] Pos[0] 900
+execute store result score @s TargetXVel run data get entity @e[limit=1,sort=nearest,type=marker,tag=TargetVelHoriz] Pos[0] 800
 $execute store result score @s TargetYVel run data get entity @e[limit=1,sort=nearest,type=marker,tag=TargetVelVert] Pos[1] $(ChargeFlySpeed)
-execute store result score @s TargetZVel run data get entity @e[limit=1,sort=nearest,type=marker,tag=TargetVelHoriz] Pos[2] 900
+execute store result score @s TargetZVel run data get entity @e[limit=1,sort=nearest,type=marker,tag=TargetVelHoriz] Pos[2] 800
 scoreboard players operation @s XVelDiff = @s TargetXVel
 scoreboard players operation @s XVelDiff -= @s XVel
 scoreboard players operation @s XVelDiff *= SM Temp
