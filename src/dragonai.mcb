@@ -64,24 +64,24 @@ dir charging {
         # execute store result score @s Rotation run data get entity @s Rotation[0] 100
         scoreboard players set ST Temp 2000
         scoreboard players set B Temp 1000
-        scoreboard players set F Temp 1125
+        scoreboard players set F Temp 1150
         scoreboard players set WR Temp 500
         scoreboard players set 100 Temp 100
         execute if score EnableDebug DragonAISettings matches 1 at @s run particle minecraft:campfire_signal_smoke ~ ~ ~ 0 0 0 0 2 force
         execute if score EnableDebug DragonAISettings matches 1 at @s rotated ~ 0 run particle minecraft:campfire_cosy_smoke ^ ^ ^-10 0 0 0 0 0 force
         execute store result entity @e[type=marker,limit=1,sort=nearest,tag=DragonChargeRotation] Rotation[0] float 0.01 run scoreboard players get @s Rotation
         execute at @e[type=marker,limit=1,sort=nearest,tag=DragonChargeRotation] rotated ~90 0 run summon marker ^ ^ ^-1 {Tags:["SmoothTurn","Right","Far"]}
-        execute at @e[type=marker,limit=1,sort=nearest,tag=DragonChargeRotation] rotated ~20 0 run summon marker ^ ^ ^-1 {Tags:["SmoothTurn","Right"]}
+        execute at @e[type=marker,limit=1,sort=nearest,tag=DragonChargeRotation] rotated ~8 0 run summon marker ^ ^ ^-1 {Tags:["SmoothTurn","Right"]}
         execute at @e[type=marker,limit=1,sort=nearest,tag=DragonChargeRotation] rotated ~0 0 run summon marker ^ ^ ^-1 {Tags:["SmoothTurn","NoTurn"]}
-        execute at @e[type=marker,limit=1,sort=nearest,tag=DragonChargeRotation] rotated ~-20 0 run summon marker ^ ^ ^-1 {Tags:["SmoothTurn","Left"]}
+        execute at @e[type=marker,limit=1,sort=nearest,tag=DragonChargeRotation] rotated ~-8 0 run summon marker ^ ^ ^-1 {Tags:["SmoothTurn","Left"]}
         execute at @e[type=marker,limit=1,sort=nearest,tag=DragonChargeRotation] rotated ~-90 0 run summon marker ^ ^ ^-1 {Tags:["SmoothTurn","Left","Far"]}
-        execute at @e[type=marker,limit=1,sort=nearest,tag=DragonChargeRotation] rotated ~-180 0 run summon marker ^ ^ ^-1 {Tags:["SmoothTurn","Behind"]}
+        # execute at @e[type=marker,limit=1,sort=nearest,tag=DragonChargeRotation] rotated ~-180 0 run summon marker ^ ^ ^-1 {Tags:["SmoothTurn","Behind"]}
         execute if score EnableDebug DragonAISettings matches 1 as @e[tag=SmoothTurn,type=marker] at @s run particle electric_spark ~ ~0.5 ~ 0 0 0 0 0 force
         execute at @s as @e[tag=DragonChargeTarget,limit=1,sort=nearest] at @s run tag @e[tag=SmoothTurn,type=marker,limit=1,sort=nearest] add Closest
-        execute at @s as @e[tag=DragonChargeRotation,type=marker,limit=1,sort=nearest] facing entity @e[tag=DragonChargeTarget] eyes rotated ~180 ~ run tp @s ^ ^ ^ ~ ~
+        execute at @s as @e[tag=DragonChargeRotation,type=marker,limit=1,sort=nearest] facing entity @e[tag=DragonChargeTarget] feet rotated ~ ~ run tp @s ^ ^ ^ ~180 ~
         execute if entity @e[type=marker,tag=SmoothTurn,tag=Closest,tag=Right,tag=Far] at @s run scoreboard players add @s RVel 125
-        execute if entity @e[type=marker,tag=SmoothTurn,tag=Closest,tag=Right] at @s run scoreboard players add @s RVel 90
-        execute if entity @e[type=marker,tag=SmoothTurn,tag=Closest,tag=Left] at @s run scoreboard players remove @s RVel 90
+        execute if entity @e[type=marker,tag=SmoothTurn,tag=Closest,tag=Right] at @s run scoreboard players add @s RVel 125
+        execute if entity @e[type=marker,tag=SmoothTurn,tag=Closest,tag=Left] at @s run scoreboard players remove @s RVel 125
         execute if entity @e[type=marker,tag=SmoothTurn,tag=Closest,tag=Left,tag=Far] at @s run scoreboard players remove @s RVel 125
         execute if entity @e[type=marker,tag=SmoothTurn,tag=Closest,tag=Behind] at @s if score @s RVel matches 0 run scoreboard players add @s RVel 10
         execute if entity @e[type=marker,tag=SmoothTurn,tag=Closest,tag=Behind] at @s if score @s RVel matches 1.. run scoreboard players operation @s RVel += WR Temp
@@ -89,6 +89,7 @@ dir charging {
         # execute if entity @e[type=marker,tag=SmoothTurn,tag=Closest,tag=Behind] at @s run scoreboard players operation @s RVel /= 100 Temp
         scoreboard players operation @s RVel *= B Temp
         scoreboard players operation @s RVel /= F Temp
+        execute if entity @e[type=marker,tag=SmoothTurn,tag=Closest,tag=NoTurn] at @s store result score @s Rotation run data get entity @e[limit=1,tag=DragonChargeRotation] Rotation[0] 100
         execute if entity @e[type=marker,tag=SmoothTurn,tag=Closest,tag=NoTurn] at @s run scoreboard players operation @s RVel *= B Temp
         execute if entity @e[type=marker,tag=SmoothTurn,tag=Closest,tag=NoTurn] at @s run scoreboard players operation @s RVel /= ST Temp
         scoreboard players operation @s Rotation += @s RVel
@@ -234,6 +235,7 @@ function ai {
     execute if score DisableVanillaCharge DragonAISettings matches 1 if entity @s[nbt={DragonPhase:8}] run data modify entity @s DragonPhase set value 0
     execute if score DisablePerching DragonAISettings matches 1 unless entity @s[nbt=!{DragonPhase:3},nbt=!{DragonPhase:5},nbt=!{DragonPhase:6},nbt=!{DragonPhase:7}] unless entity @s[nbt=!{HurtTime:0s}] run data merge entity @s {DragonPhase:0}
 
+    execute at @s run function dragonai:charging/initcharge
 
     # Dragon charging mechanics
 
@@ -259,7 +261,6 @@ function ai {
     execute store result storage charge Pos[0] double 0.01 run scoreboard players get @s ChargeTargetX
     execute store result storage charge Pos[1] double 0.01 run scoreboard players get @s ChargeTargetY
     execute store result storage charge Pos[2] double 0.01 run scoreboard players get @s ChargeTargetZ
-    execute at @s run function dragonai:charging/initcharge
 
     # Set the target for certain operations
     execute unless score @s DragonChargeTimer matches 1.. if data entity @s {DragonPhase:0} at @s run tag @e[type=marker,tag=DragonNode,limit=1,sort=nearest,distance=0..] add DragonTarget
@@ -298,6 +299,7 @@ function bedrockareaeffectcloudinit {
 
 tag entity_type dragon_charge_at {
     minecraft:zombie
+    minecraft:iron_golem
 }
 
 function load minecraft:load {
@@ -372,9 +374,9 @@ function load minecraft:load {
     # Setting to change how often dragons can charge
     scoreboard players set ChargeRate DragonAISettings 5
     # Setting for how smooth the dragon's horizontal speed should change while charging
-    scoreboard players set HorizontalSmoothing DragonAISettings 30
+    scoreboard players set HorizontalSmoothing DragonAISettings 50
     # Setting for how smooth the dragon's vertical speed should change while charging
-    scoreboard players set VerticalSmoothing DragonAISettings 30
+    scoreboard players set VerticalSmoothing DragonAISettings 50
     # Setting to make the dragon perch more often
     scoreboard players set FrequentPerching DragonAISettings 0
     # Setting to disable perching.
@@ -492,27 +494,51 @@ function config {
 
 dir config {
     function page1 {
-        tellraw @s "Customizable Dragon AI Configuration"
-        boolean_input <%"Dragon Charging"%> <%"If enabled, the dragon will randomly charge at the nearest player. The chance of the dragon charging is determined by the below setting."%> DragonAISettings DragonCharging dragonai:config/page1
-        numeric_input <%"Dragon Charge Rate"%> <%"The chance for the above setting. The datapack rolls a random number between 1 and 1000 EVERY TICK, and if that number is less than or equal to this setting's value, the dragon will charge assuming some other conditions are all met."%> DragonAISettings ChargeRate 1 disabled condition <%"if score DragonCharging DragonAISettings matches 0"%> dragonai:config/page1
-        boolean_input <%"Fix MC-272431"%> <%"Fixes the bug introduced in 1.14 where the dragon goes up and down very slowly, causing erratic behavior as a side effect. Visit https://bugs.mojang.com/browse/MC-272431 for more info."%> DragonAISettings FixVertical dragonai:config/page1
-        numeric_input <%"Dragon Vertical Fly Speed"%> <%"The vertical speed increase, as a percent of the normal speed, ADDED ONTO the normal speed (example: a value of 900 will make the dragon move vertically 10x as fast as normal.)"%> DragonAISettings FlySpeed 100 disabled condition <%"if score FixVertical DragonAISettings matches 0"%> dragonai:config/page1
-        numeric_input <%"Dragon Vertical Fly Speed (Charging)"%> <%"Same as the above, but applied when charging. This option IS affected by the above option."%> DragonAISettings ChargeFlySpeed 10 dragonai:config/page1
-        numeric_input <%"Dragon Charging Vertical Smoothing"%> <%"How smooth the dragon's change in vertical velocity is when charging, so the dragon doesn't just instantly snap its' vertical velocity up or down toward the charge target when the dragon starts a charge."%> DragonAISettings VerticalSmoothing 1 dragonai:config/page1
-        numeric_input <%"Dragon Charging Horizontal Smoothing"%> <%"Ditto, but for horizontal instead of vertical."%> DragonAISettings HorizontalSmoothing 1 dragonai:config/page1
-        boolean_input <%"Allow 1.9+ Mechanics"%> <%"Whether mechanics added in 1.9 can be used. Examples being dragon fireballs, perching, etc."%> DragonAISettings Allow1.9Behavior dragonai:config/page1
-        boolean_input <%"Disable Perching"%> <%"If true, the dragon won't be allowed to perch."%> DragonAISettings DisablePerching dragonai:config/page1
-        boolean_input <%"Frequent Perching"%> <%"If true, the dragon will perch more often. This does not respect normal perching rules, as this sets the dragon to phase 3 (perching) at random unless the dragon is already perched."%> DragonAISettings FrequentPerching disabled condition <%"unless score DisablePerching DragonAISettings matches 0"%> dragonai:config/page1
-        boolean_input <%"Replace Vanilla Charging Mechanics"%> <%"Not to be confused with the below. If true, when the dragon starts a vanilla charge, it uses this datapack's charging mechanics instead of the vanilla charging mechanics."%> DragonAISettings ReplaceVanillaCharging dragonai:config/page1
-        boolean_input <%"Mimic Vanilla Charging Mechanics"%> <%"Not to be confused with the above. If true, the charging added by this datapack will mimic the vanilla dragon charging mechanic, where the dragon charges at where the nearest player was when the charge started instead of charging toward where the nearest player currently is for the duration of the charge."%> DragonAISettings MimicVanillaCharge dragonai:config/page1
-        boolean_input <%"Bedrock Area Effect Clouds"%> <%"Makes area effect clouds (spawned by any means, such as commands, lingering potions, or dragon's breath) act like they do in Minecraft: Bedrock Edition, where they don't grow/shrink, and dragon's breath area effect clouds take like forever to dissipate"%> DragonAISettings BedrockAEClouds dragonai:config/page1
-        boolean_input <%"Stop Charging When Hurt"%> <%"If true, the dragon will stop charging upon taking any damage. This doesn't affect vanilla's charging mechanic."%> DragonAISettings DisablePerching dragonai:config/page1
-        boolean_input <%"Enable Debug Visuals"%> <%"For debugging. If true, various particles will visualise certain aspects of the datapack."%> DragonAISettings EnableDebug dragonai:config/page1
-        boolean_input <%"Disable Vanilla Charging"%> <%"If true, the dragon will not charge at a player after leaving the perch. Not to be confused with Replace Vanilla Charging."%> DragonAISettings DisableVanillaCharge dragonai:config/page1
-        REPEAT (18,19) as variable {
-            tellraw @s ""
+        IF ($compilever == "1.21.5") {
+            tellraw @s "Customizable Dragon AI Configuration"
+            boolean_input <%"Dragon Charging"%> <%"If enabled, the dragon will randomly charge at the nearest player. The chance of the dragon charging is determined by the below setting."%> DragonAISettings DragonCharging dragonai:config/page1
+            numeric_input <%"Dragon Charge Rate"%> <%"The chance for the above setting. The datapack rolls a random number between 1 and 1000 EVERY TICK, and if that number is less than or equal to this setting's value, the dragon will charge assuming some other conditions are all met."%> DragonAISettings ChargeRate 1 disabled condition <%"if score DragonCharging DragonAISettings matches 0"%> dragonai:config/page1
+            boolean_input <%"Fix MC-272431"%> <%"Fixes the bug introduced in 1.14 where the dragon goes up and down very slowly, causing erratic behavior as a side effect. Visit https://bugs.mojang.com/browse/MC-272431 for more info."%> DragonAISettings FixVertical dragonai:config/page1
+            numeric_input <%"Dragon Vertical Fly Speed"%> <%"The vertical speed increase, as a percent of the normal speed, ADDED ONTO the normal speed (example: a value of 900 will make the dragon move vertically 10x as fast as normal.)"%> DragonAISettings FlySpeed 100 disabled condition <%"if score FixVertical DragonAISettings matches 0"%> dragonai:config/page1
+            numeric_input <%"Dragon Vertical Fly Speed (Charging)"%> <%"Same as the above, but applied when charging. This option IS affected by the above option."%> DragonAISettings ChargeFlySpeed 10 dragonai:config/page1
+            numeric_input <%"Dragon Charging Vertical Smoothing"%> <%"How smooth the dragon's change in vertical velocity is when charging, so the dragon doesn't just instantly snap its' vertical velocity up or down toward the charge target when the dragon starts a charge."%> DragonAISettings VerticalSmoothing 1 dragonai:config/page1
+            numeric_input <%"Dragon Charging Horizontal Smoothing"%> <%"Ditto, but for horizontal instead of vertical."%> DragonAISettings HorizontalSmoothing 1 dragonai:config/page1
+            boolean_input <%"Allow 1.9+ Mechanics"%> <%"Whether mechanics added in 1.9 can be used. Examples being dragon fireballs, perching, etc."%> DragonAISettings Allow1.9Behavior dragonai:config/page1
+            boolean_input <%"Disable Perching"%> <%"If true, the dragon won't be allowed to perch."%> DragonAISettings DisablePerching dragonai:config/page1
+            boolean_input <%"Frequent Perching"%> <%"If true, the dragon will perch more often. This does not respect normal perching rules, as this sets the dragon to phase 3 (perching) at random unless the dragon is already perched."%> DragonAISettings FrequentPerching disabled condition <%"unless score DisablePerching DragonAISettings matches 0"%> dragonai:config/page1
+            boolean_input <%"Replace Vanilla Charging Mechanics"%> <%"Not to be confused with the below. If true, when the dragon starts a vanilla charge, it uses this datapack's charging mechanics instead of the vanilla charging mechanics."%> DragonAISettings ReplaceVanillaCharging dragonai:config/page1
+            boolean_input <%"Mimic Vanilla Charging Mechanics"%> <%"Not to be confused with the above. If true, the charging added by this datapack will mimic the vanilla dragon charging mechanic, where the dragon charges at where the nearest player was when the charge started instead of charging toward where the nearest player currently is for the duration of the charge."%> DragonAISettings MimicVanillaCharge dragonai:config/page1
+            boolean_input <%"Bedrock Area Effect Clouds"%> <%"Makes area effect clouds (spawned by any means, such as commands, lingering potions, or dragon's breath) act like they do in Minecraft: Bedrock Edition, where they don't grow/shrink, and dragon's breath area effect clouds take like forever to dissipate"%> DragonAISettings BedrockAEClouds dragonai:config/page1
+            boolean_input <%"Stop Charging When Hurt"%> <%"If true, the dragon will stop charging upon taking any damage. This doesn't affect vanilla's charging mechanic."%> DragonAISettings DisablePerching dragonai:config/page1
+            boolean_input <%"Enable Debug Visuals"%> <%"For debugging. If true, various particles will visualise certain aspects of the datapack."%> DragonAISettings EnableDebug dragonai:config/page1
+            boolean_input <%"Disable Vanilla Charging"%> <%"If true, the dragon will not charge at a player after leaving the perch. Not to be confused with Replace Vanilla Charging."%> DragonAISettings DisableVanillaCharge dragonai:config/page1
+            REPEAT (18,19) as variable {
+                tellraw @s ""
+            }
+            pagebar 1 <%"dragonai:config"%>
+        } ELSE IF ($compilever == "1.21.4") {
+            tellraw @s "Customizable Dragon AI Configuration"
+            boolean_input legacy <%"Dragon Charging"%> <%"If enabled, the dragon will randomly charge at the nearest player. The chance of the dragon charging is determined by the below setting."%> DragonAISettings DragonCharging dragonai:config/page1
+            numeric_input legacy <%"Dragon Charge Rate"%> <%"The chance for the above setting. The datapack rolls a random number between 1 and 1000 EVERY TICK, and if that number is less than or equal to this setting's value, the dragon will charge assuming some other conditions are all met."%> DragonAISettings ChargeRate 1 disabled condition <%"if score DragonCharging DragonAISettings matches 0"%> dragonai:config/page1
+            boolean_input legacy <%"Fix MC-272431"%> <%"Fixes the bug introduced in 1.14 where the dragon goes up and down very slowly, causing erratic behavior as a side effect. Visit https://bugs.mojang.com/browse/MC-272431 for more info."%> DragonAISettings FixVertical dragonai:config/page1
+            numeric_input legacy <%"Dragon Vertical Fly Speed"%> <%"The vertical speed increase, as a percent of the normal speed, ADDED ONTO the normal speed (example: a value of 900 will make the dragon move vertically 10x as fast as normal.)"%> DragonAISettings FlySpeed 100 disabled condition <%"if score FixVertical DragonAISettings matches 0"%> dragonai:config/page1
+            numeric_input legacy <%"Dragon Vertical Fly Speed (Charging)"%> <%"Same as the above, but applied when charging. This option IS affected by the above option."%> DragonAISettings ChargeFlySpeed 10 dragonai:config/page1
+            numeric_input legacy <%"Dragon Charging Vertical Smoothing"%> <%"How smooth the dragon's change in vertical velocity is when charging, so the dragon doesn't just instantly snap its' vertical velocity up or down toward the charge target when the dragon starts a charge."%> DragonAISettings VerticalSmoothing 1 dragonai:config/page1
+            numeric_input legacy <%"Dragon Charging Horizontal Smoothing"%> <%"Ditto, but for horizontal instead of vertical."%> DragonAISettings HorizontalSmoothing 1 dragonai:config/page1
+            boolean_input legacy <%"Allow 1.9+ Mechanics"%> <%"Whether mechanics added in 1.9 can be used. Examples being dragon fireballs, perching, etc."%> DragonAISettings Allow1.9Behavior dragonai:config/page1
+            boolean_input legacy <%"Disable Perching"%> <%"If true, the dragon won't be allowed to perch."%> DragonAISettings DisablePerching dragonai:config/page1
+            boolean_input legacy <%"Frequent Perching"%> <%"If true, the dragon will perch more often. This does not respect normal perching rules, as this sets the dragon to phase 3 (perching) at random unless the dragon is already perched."%> DragonAISettings FrequentPerching disabled condition <%"unless score DisablePerching DragonAISettings matches 0"%> dragonai:config/page1
+            boolean_input legacy <%"Replace Vanilla Charging Mechanics"%> <%"Not to be confused with the below. If true, when the dragon starts a vanilla charge, it uses this datapack's charging mechanics instead of the vanilla charging mechanics."%> DragonAISettings ReplaceVanillaCharging dragonai:config/page1
+            boolean_input legacy <%"Mimic Vanilla Charging Mechanics"%> <%"Not to be confused with the above. If true, the charging added by this datapack will mimic the vanilla dragon charging mechanic, where the dragon charges at where the nearest player was when the charge started instead of charging toward where the nearest player currently is for the duration of the charge."%> DragonAISettings MimicVanillaCharge dragonai:config/page1
+            boolean_input legacy <%"Bedrock Area Effect Clouds"%> <%"Makes area effect clouds (spawned by any means, such as commands, lingering potions, or dragon's breath) act like they do in Minecraft: Bedrock Edition, where they don't grow/shrink, and dragon's breath area effect clouds take like forever to dissipate"%> DragonAISettings BedrockAEClouds dragonai:config/page1
+            boolean_input legacy <%"Stop Charging When Hurt"%> <%"If true, the dragon will stop charging upon taking any damage. This doesn't affect vanilla's charging mechanic."%> DragonAISettings DisablePerching dragonai:config/page1
+            boolean_input legacy <%"Enable Debug Visuals"%> <%"For debugging. If true, various particles will visualise certain aspects of the datapack."%> DragonAISettings EnableDebug dragonai:config/page1
+            boolean_input legacy <%"Disable Vanilla Charging"%> <%"If true, the dragon will not charge at a player after leaving the perch. Not to be confused with Replace Vanilla Charging."%> DragonAISettings DisableVanillaCharge dragonai:config/page1
+            REPEAT (18,19) as variable {
+                tellraw @s ""
+            }
+            pagebar legacy 1 <%"dragonai:config"%>
         }
-        pagebar 1 <%"dragonai:config"%>
     }
 }
 
@@ -529,8 +555,8 @@ dir presets {
         scoreboard players set MimicVanillaCharge DragonAISettings 0
         scoreboard players set FlySpeed DragonAISettings 900
         scoreboard players set ChargeFlySpeed DragonAISettings 100
-        scoreboard players set VerticalSmoothing DragonAISettings 25
-        scoreboard players set HorizontalSmoothing DragonAISettings 15
+        scoreboard players set VerticalSmoothing DragonAISettings 50
+        scoreboard players set HorizontalSmoothing DragonAISettings 50
         scoreboard players set Slowdown DragonAISettings 10
         scoreboard players set UseEnhancedAI DragonAISettings 0
         scoreboard players set StopChargeOnHurt DragonAISettings 1
@@ -546,8 +572,8 @@ dir presets {
         scoreboard players set BedrockStyle DragonAISettings 0
         scoreboard players set FlySpeed DragonAISettings 900
         scoreboard players set ChargeFlySpeed DragonAISettings 150
-        scoreboard players set VerticalSmoothing DragonAISettings 15
-        scoreboard players set HorizontalSmoothing DragonAISettings 25
+        scoreboard players set VerticalSmoothing DragonAISettings 50
+        scoreboard players set HorizontalSmoothing DragonAISettings 50
         scoreboard players set Slowdown DragonAISettings 15
         scoreboard players set MimicVanillaCharging DragonAISettings 1
         scoreboard players set UseEnhancedAI DragonAISettings 0
@@ -562,8 +588,8 @@ dir presets {
         scoreboard players set DragonCharging DragonAISettings 0
         scoreboard players set BedrockStyle DragonAISettings 0
         scoreboard players set FlySpeed DragonAISettings 0
-        scoreboard players set VerticalSmoothing DragonAISettings 30
-        scoreboard players set HorizontalSmoothing DragonAISettings 40
+        scoreboard players set VerticalSmoothing DragonAISettings 50
+        scoreboard players set HorizontalSmoothing DragonAISettings 50
         scoreboard players set Slowdown DragonAISettings 15
         scoreboard players set ChargeFlySpeed DragonAISettings 125
         scoreboard players set MimicVanillaCharging DragonAISettings 1
@@ -581,8 +607,8 @@ dir presets {
         scoreboard players set BedrockStyle DragonAISettings 1
         scoreboard players set FlySpeed DragonAISettings 1900
         scoreboard players set ChargeFlySpeed DragonAISettings 200
-        scoreboard players set VerticalSmoothing DragonAISettings 10
-        scoreboard players set HorizontalSmoothing DragonAISettings 20
+        scoreboard players set VerticalSmoothing DragonAISettings 50
+        scoreboard players set HorizontalSmoothing DragonAISettings 50
         scoreboard players set Slowdown DragonAISettings 15
         scoreboard players set MimicVanillaCharging DragonAISettings 0
         scoreboard players set StopChargeOnHurt DragonAISettings 1
@@ -599,7 +625,7 @@ dir presets {
         scoreboard players set BedrockStyle DragonAISettings 1
         scoreboard players set FlySpeed DragonAISettings 900
         scoreboard players set ChargeFlySpeed DragonAISettings 100
-        scoreboard players set VerticalSmoothing DragonAISettings 20
+        scoreboard players set VerticalSmoothing DragonAISettings 50
         scoreboard players set Slowdown DragonAISettings 15
         scoreboard players set UseEnhancedAI DragonAISettings 0
         function dragonai:config
@@ -614,7 +640,7 @@ dir presets {
         scoreboard players set DragonCharging DragonAISettings 0
         scoreboard players set BedrockStyle DragonAISettings 1
         scoreboard players set FlySpeed DragonAISettings 1900
-        scoreboard players set VerticalSmoothing DragonAISettings 30
+        scoreboard players set VerticalSmoothing DragonAISettings 50
         scoreboard players set HorizontalSmoothing DragonAISettings 50
         scoreboard players set Slowdown DragonAISettings 15
         scoreboard players set ChargeFlySpeed DragonAISettings 140
@@ -634,8 +660,8 @@ dir presets {
         scoreboard players set BedrockStyle DragonAISettings 0
         scoreboard players set FlySpeed DragonAISettings 900
         scoreboard players set ChargeFlySpeed DragonAISettings 150
-        scoreboard players set VerticalSmoothing DragonAISettings 15
-        scoreboard players set HorizontalSmoothing DragonAISettings 25
+        scoreboard players set VerticalSmoothing DragonAISettings 50
+        scoreboard players set HorizontalSmoothing DragonAISettings 50
         scoreboard players set Slowdown DragonAISettings 15
         scoreboard players set MimicVanillaCharging DragonAISettings 1
         scoreboard players set DisableVanillaCharge DragonAISettings 1
@@ -655,8 +681,8 @@ dir presets {
         scoreboard players set MimicVanillaCharge DragonAISettings 0
         scoreboard players set FlySpeed DragonAISettings 900
         scoreboard players set ChargeFlySpeed DragonAISettings 100
-        scoreboard players set VerticalSmoothing DragonAISettings 25
-        scoreboard players set HorizontalSmoothing DragonAISettings 15
+        scoreboard players set VerticalSmoothing DragonAISettings 50
+        scoreboard players set HorizontalSmoothing DragonAISettings 50
         scoreboard players set Slowdown DragonAISettings 10
         scoreboard players set UseEnhancedAI DragonAISettings 0
         scoreboard players set StopChargeOnHurt DragonAISettings 1
@@ -671,9 +697,9 @@ dir presets {
         scoreboard players set DragonCharging DragonAISettings 0
         scoreboard players set BedrockStyle DragonAISettings 0
         scoreboard players set FlySpeed DragonAISettings 900
-        scoreboard players set ChargeFlySpeed DragonAISettings 150
-        scoreboard players set VerticalSmoothing DragonAISettings 15
-        scoreboard players set HorizontalSmoothing DragonAISettings 25
+        scoreboard players set ChargeFlySpeed DragonAISettings 100
+        scoreboard players set VerticalSmoothing DragonAISettings 50
+        scoreboard players set HorizontalSmoothing DragonAISettings 50
         scoreboard players set Slowdown DragonAISettings 15
         scoreboard players set MimicVanillaCharging DragonAISettings 1
         scoreboard players set UseEnhancedAI DragonAISettings 0

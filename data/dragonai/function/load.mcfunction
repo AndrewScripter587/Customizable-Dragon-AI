@@ -64,9 +64,9 @@ scoreboard players set Allow1.9Behavior DragonAISettings 1
 # Setting to change how often dragons can charge
 scoreboard players set ChargeRate DragonAISettings 5
 # Setting for how smooth the dragon's horizontal speed should change while charging
-scoreboard players set HorizontalSmoothing DragonAISettings 30
+scoreboard players set HorizontalSmoothing DragonAISettings 50
 # Setting for how smooth the dragon's vertical speed should change while charging
-scoreboard players set VerticalSmoothing DragonAISettings 30
+scoreboard players set VerticalSmoothing DragonAISettings 50
 # Setting to make the dragon perch more often
 scoreboard players set FrequentPerching DragonAISettings 0
 # Setting to disable perching.

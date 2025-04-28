@@ -10,6 +10,43 @@ template feedback {
     }
 }
 
+template storedata {
+    with motion {
+        data modify storage dragonai:stored Motion set from entity @s Motion
+    }
+    with location {
+        data modify storage dragonai:stored Pos set from entity @s Pos
+        data modify storage dragonai:stored Rotation set from entity @s Rotation
+    }
+    with position {
+        data modify storage dragonai:stored Pos set from entity @s Pos
+    }
+    with rotation {
+        data modify storage dragonai:stored Rotation set from entity @s Rotation
+    }
+    with dragon_phase {
+        data modify storage dragonai:stored DragonPhase set from entity @s DragonPhase
+    }
+}
+template loaddata {
+    with motion {
+        data modify entity @s Motion set from storage dragonai:stored Motion
+    }
+    with location {
+        data modify entity @s Pos set from storage dragonai:stored Pos
+        data modify entity @s Rotation set from storage dragonai:stored Rotation
+    }
+    with position {
+        data modify entity @s Pos set from storage dragonai:stored Pos
+    }
+    with rotation {
+        data modify entity @s Rotation set from storage dragonai:stored Rotation
+    }
+    with dragon_phase {
+        data modify entity @s DragonPhase set from storage dragonai:stored DragonPhase
+    }
+}
+
 template dragonai.LOGGER {
     with log json:raw {
         tellraw @a ["§2[Customizable Dragon AI - INFO]: §r",<%json%>]

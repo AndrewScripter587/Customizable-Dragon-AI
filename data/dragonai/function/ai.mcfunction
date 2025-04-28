@@ -41,6 +41,7 @@ execute if score ReplaceVanillaCharging DragonAISettings matches 1 if entity @s[
 # Prevent individual vanilla mechanics, if any enabled
 execute if score DisableVanillaCharge DragonAISettings matches 1 if entity @s[nbt={DragonPhase:8}] run data modify entity @s DragonPhase set value 0
 execute if score DisablePerching DragonAISettings matches 1 unless entity @s[nbt=!{DragonPhase:3},nbt=!{DragonPhase:5},nbt=!{DragonPhase:6},nbt=!{DragonPhase:7}] unless entity @s[nbt=!{HurtTime:0s}] run data merge entity @s {DragonPhase:0}
+execute at @s run function dragonai:charging/initcharge
 # Dragon charging mechanics
 execute unless score @s DragonChargeTimer matches 1.. run tp @e[type=marker,limit=1,sort=nearest,tag=DragonChargeRotation,distance=..20] ^ ^ ^ ~180 ~
 execute unless score @s DragonChargeTimer matches 1.. store result score @s Rotation run data get entity @s Rotation[0] 100
@@ -61,7 +62,6 @@ data merge storage charge {Pos:[0d,0d,0d]}
 execute store result storage charge Pos[0] double 0.01 run scoreboard players get @s ChargeTargetX
 execute store result storage charge Pos[1] double 0.01 run scoreboard players get @s ChargeTargetY
 execute store result storage charge Pos[2] double 0.01 run scoreboard players get @s ChargeTargetZ
-execute at @s run function dragonai:charging/initcharge
 # Set the target for certain operations
 execute unless score @s DragonChargeTimer matches 1.. if data entity @s {DragonPhase:0} at @s run tag @e[type=marker,tag=DragonNode,limit=1,sort=nearest,distance=0..] add DragonTarget
 execute unless score @s DragonChargeTimer matches 1.. if data entity @s {DragonPhase:2} at @s run tag @e[type=marker,tag=DragonNode,limit=1,sort=nearest,distance=0..] add DragonTarget
