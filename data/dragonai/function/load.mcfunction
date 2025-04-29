@@ -2,7 +2,6 @@
 
 # Display a message saying the pack is loading
 tellraw @a {"text":"Customizable Dragon AI is loading...","color":"yellow"}
-function verdetect:load
 # Create a "top of 0, 0" marker in all three dimensions.
 execute positioned 0 0 0 in minecraft:overworld unless entity @e[type=marker,tag=center,distance=0..] run summon marker ~ ~ ~ {Tags:["center"]}
 execute positioned 0 0 0 in minecraft:the_nether unless entity @e[type=marker,tag=center,distance=0..] run summon marker ~ ~ ~ {Tags:["center"]}
@@ -53,6 +52,7 @@ scoreboard players enable @a disablestartup
 scoreboard players set FrictionUpperFraction DragonAISettings 1
 scoreboard players set FrictionLowerFraction DragonAISettings 1
 # Initialize DragonAISettings values
+scoreboard players set Enabled DragonAISettings 1
 # Setting to enable/disable the dragon's ability to randomly "charge" (go towards entities in an attempt to attack them)
 scoreboard players set DragonCharging DragonAISettings 1
 # Setting to make dragon charging mimic how it is in modern minecraft, where the dragon only charges at where you were when the charge started. Turning this off will make the dragon always charge at where the player currently is.
@@ -102,6 +102,8 @@ scoreboard players set BedrockStyle DragonAISettings 0
 scoreboard players set BedrockAEClouds DragonAISettings 0
 # Setting to make the dragon stop charging whenever it takes damage.
 scoreboard players set StopChargeOnHurt DragonAISettings 0
+# Enhanced AI Settings
+# Temporarily removed during the transition to mc-build
 # Setting for whether or not the custom "enhanced" ai should be used.
 scoreboard players set UseEnhancedAI DragonAISettings 0
 # Setting for the mode of the enhanced ai
@@ -112,3 +114,4 @@ function #dragonai:defaults
 # Display a message saying the pack loaded successfully
 tellraw @a {"text":"Customizable Dragon AI has been enabled!","color":"green"}
 # schedule function dragonai:welcome 3s
+execute as @e[type=#dragonai:dragon_charge_at] if entity @s[type=player] run function dragonai:zzz/0
