@@ -28,10 +28,11 @@ execute if entity @e[type=marker,tag=SmoothTurn,tag=Closest,tag=Behind] at @s if
 # execute if entity @e[type=marker,tag=SmoothTurn,tag=Closest,tag=Behind] at @s run scoreboard players operation @s RVel /= 100 Temp
 scoreboard players operation @s RVel *= B Temp
 scoreboard players operation @s RVel /= F Temp
-execute if entity @e[type=marker,tag=SmoothTurn,tag=Closest,tag=NoTurn] at @s store result score @s Rotation run data get entity @e[limit=1,tag=DragonChargeRotation] Rotation[0] 100
-execute if entity @e[type=marker,tag=SmoothTurn,tag=Closest,tag=NoTurn] at @s run scoreboard players operation @s RVel *= B Temp
-execute if entity @e[type=marker,tag=SmoothTurn,tag=Closest,tag=NoTurn] at @s run scoreboard players operation @s RVel /= ST Temp
-scoreboard players operation @s Rotation += @s RVel
+execute if entity @e[type=marker,tag=SmoothTurn,tag=Closest,tag=NoTurn] at @s store result score @s Rotation run data get entity @e[limit=1,tag=DragonChargeRotation,sort=nearest] Rotation[0] 100
+# execute if entity @e[type=marker,tag=SmoothTurn,tag=Closest,tag=NoTurn] at @s run scoreboard players operation @s RVel *= B Temp
+# execute if entity @e[type=marker,tag=SmoothTurn,tag=Closest,tag=NoTurn] at @s run scoreboard players operation @s RVel /= ST Temp
+execute if entity @e[type=marker,tag=SmoothTurn,tag=Closest,tag=NoTurn] at @s run scoreboard players set @s RVel 0
+execute unless entity @e[type=marker,tag=SmoothTurn,tag=Closest,tag=NoTurn] run scoreboard players operation @s Rotation += @s RVel
 execute store result entity @s Rotation[0] float 0.01 run scoreboard players get @s Rotation
 kill @e[tag=SmoothTurn,type=marker]
 tag @e remove Closest
