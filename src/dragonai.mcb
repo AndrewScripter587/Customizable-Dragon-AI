@@ -322,7 +322,7 @@ function load minecraft:load {
     execute positioned 0 0 0 in minecraft:overworld unless entity @e[type=marker,tag=center,distance=0..] run summon marker ~ ~ ~ {Tags:["center"]}
     execute positioned 0 0 0 in minecraft:the_nether unless entity @e[type=marker,tag=center,distance=0..] run summon marker ~ ~ ~ {Tags:["center"]}
     execute positioned 0 0 0 in minecraft:the_end unless entity @e[type=marker,tag=center,distance=0..] run summon marker ~ ~ ~ {Tags:["center"]}
-    schedule function dragonai:misc/detect-oldcombat 5s
+    function dragonai:misc/detect-oldcombat
     # MC-Build objective
     scoreboard objectives add mcb.internal dummy
 
@@ -456,7 +456,8 @@ dir misc {
     function detect-oldcombat {
         execute store success score HasOldCombat Temp run scoreboard objectives setdisplay sidebar.team.yellow OldCombatSettings
         execute if score HasOldCombat Temp matches 1 run {
-            dragonai.LOGGER log ["Old Combat Datapack detected. I recommend the use of the Customizable Dragon AI 1.8 Preset for the old dragon fight experience. ",{text:"[Click Here to use the preset.]",click_event:{action:"run_command",command:"function dragonai:presets/1.8-recommend"},color:yellow}]
+            dragonai.LOGGER log ["Old Combat Datapack detected. I recommend the use of the Customizable Dragon AI 1.8 Preset for the old dragon fight experience. Switching to the preset now."]
+            schedule function *presets/1.8-recommend 1t
         }
         scoreboard objectives setdisplay sidebar.team.yellow
     }

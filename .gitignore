@@ -6,3 +6,5 @@ data/
 *.mcfunction
 *.mcfunction
 /data
+data/dragonai/function/charging/charge.mcfunction
+/data/dragonai/function/charging

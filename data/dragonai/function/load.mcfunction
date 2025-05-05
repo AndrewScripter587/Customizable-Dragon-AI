@@ -6,7 +6,7 @@ tellraw @a {"text":"Customizable Dragon AI is loading...","color":"yellow"}
 execute positioned 0 0 0 in minecraft:overworld unless entity @e[type=marker,tag=center,distance=0..] run summon marker ~ ~ ~ {Tags:["center"]}
 execute positioned 0 0 0 in minecraft:the_nether unless entity @e[type=marker,tag=center,distance=0..] run summon marker ~ ~ ~ {Tags:["center"]}
 execute positioned 0 0 0 in minecraft:the_end unless entity @e[type=marker,tag=center,distance=0..] run summon marker ~ ~ ~ {Tags:["center"]}
-schedule function dragonai:misc/detect-oldcombat 5s replace
+function dragonai:misc/detect-oldcombat
 # MC-Build objective
 scoreboard objectives add mcb.internal dummy
 # Create the objectives
