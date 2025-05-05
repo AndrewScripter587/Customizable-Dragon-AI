@@ -1,0 +1,53 @@
+# For logging
+
+template logger {
+    with info json:raw {
+        tellraw @a ["§2[<%context.namespace%> - INFO]: §r",<%json%>]
+    }
+    with log json:raw {
+        tellraw @a ["§2[<%context.namespace%> - INFO]: §r",<%json%>]
+    }
+    with warn json:raw {
+        tellraw @a ["§6[<%context.namespace%> - WARN]: ",<%json%>]
+    }
+    with error json:raw {
+        tellraw @a ["§c[<%context.namespace%> - ERROR]: ",<%json%>]
+    }
+    with except json:raw {
+        tellraw @a ["§4[§c<%context.namespace%> - EXCEPTION§4]: Exception recieved: ",<%json%>]
+    }
+    with fatal json:raw {
+        tellraw @a ["§4[<%context.namespace%> - FATAL]: ",<%json%>]
+    }
+    with debug json:raw {
+        tellraw @a [["§e[",{text:"<%context.namespace%> - DEBUG", color:"#dbc791"},"§e]: §r"],<%json%>]
+    }
+    with macro log json:raw {
+        $tellraw @a ["§2[<%context.namespace%> - INFO]: §r",<%json%>]
+    }
+    with macro warn json:raw {
+        $tellraw @a ["§6[<%context.namespace%> - WARN]: ",<%json%>]
+    }
+    with macro error json:raw {
+        $tellraw @a ["§c[<%context.namespace%> - ERROR]: ",<%json%>]
+    }
+    with macro except json:raw {
+        $tellraw @a ["§4[§c<%context.namespace%> - EXCEPTION§4]: Exception recieved: ",<%json%>]
+    }
+    with macro fatal json:raw {
+        $tellraw @a ["§4[<%context.namespace%> - FATAL]: ",<%json%>]
+    }
+    with macro debug json:raw {
+        $tellraw @a [["§e[",{text:"<%context.namespace%> - DEBUG", color:"#dbc791"},"§e]: §r"],<%json%>]
+    }
+
+
+
+    with legacy debug json:raw {
+        tellraw @a [["§e[",{"text":"<%context.namespace%> - DEBUG", "color":"#dbc791"},"§e]: §r"],<%json%>]
+    }
+    with legacy macro debug json:raw {
+        $tellraw @a [["§e[",{"text":"<%context.namespace%> - DEBUG", "color":"#dbc791"},"§e]: §r"],<%json%>]
+    }
+}
+

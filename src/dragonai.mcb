@@ -1,5 +1,6 @@
 import ./dragonai.mcbt
 import ./z_configmenu.mcbt
+import ./Logger.mcbt
 
 <%%
         //Phase ids
@@ -15,8 +16,10 @@ import ./z_configmenu.mcbt
         Phase_DYING = 9
         Phase_DEFAULT = 10
         Phase_NOAI = 10
+        Phase_NORMAL = 0
         //Compile for specific version
         $compilever = "1.21.5"
+        $verbose = false
 %%>
 
 dir charging {
@@ -27,9 +30,9 @@ dir charging {
         execute at @s run tag @e[tag=DragonChargeRotation,type=marker,limit=1,sort=nearest] add thisdragon
         execute at @s facing entity @e[type=marker,limit=1,sort=nearest,tag=DragonChargeTarget] feet rotated ~ 0 positioned 0.0 0.0 0.0 positioned ^ ^ ^0 rotated as @s positioned ^ ^ ^-1 run summon marker ~ ~ ~ {Tags:["TargetVelHoriz"]}
         execute at @s facing entity @e[type=marker,limit=1,sort=nearest,tag=DragonChargeTarget] feet positioned 0.0 0.0 0.0 positioned ^ ^ ^1 rotated as @s positioned ^ ^ ^0 run summon marker ~ ~ ~ {Tags:["TargetVelVert"]}
-        execute store result score @s TargetXVel run data get entity @e[limit=1,sort=nearest,type=marker,tag=TargetVelHoriz] Pos[0] 900
+        execute store result score @s TargetXVel run data get entity @e[limit=1,sort=nearest,type=marker,tag=TargetVelHoriz] Pos[0] 1000
         $execute store result score @s TargetYVel run data get entity @e[limit=1,sort=nearest,type=marker,tag=TargetVelVert] Pos[1] $(ChargeFlySpeed)
-        execute store result score @s TargetZVel run data get entity @e[limit=1,sort=nearest,type=marker,tag=TargetVelHoriz] Pos[2] 900
+        execute store result score @s TargetZVel run data get entity @e[limit=1,sort=nearest,type=marker,tag=TargetVelHoriz] Pos[2] 1000
 
 
         scoreboard players operation @s XVelDiff = @s TargetXVel
@@ -79,10 +82,10 @@ dir charging {
         execute if score EnableDebug DragonAISettings matches 1 as @e[tag=SmoothTurn,type=marker] at @s run particle electric_spark ~ ~0.5 ~ 0 0 0 0 0 force
         execute at @s as @e[tag=DragonChargeTarget,limit=1,sort=nearest] at @s run tag @e[tag=SmoothTurn,type=marker,limit=1,sort=nearest] add Closest
         execute at @s as @e[tag=DragonChargeRotation,type=marker,limit=1,sort=nearest] facing entity @e[tag=DragonChargeTarget] feet rotated ~ ~ run tp @s ^ ^ ^ ~180 ~
-        execute if entity @e[type=marker,tag=SmoothTurn,tag=Closest,tag=Right,tag=Far] at @s run scoreboard players add @s RVel 125
-        execute if entity @e[type=marker,tag=SmoothTurn,tag=Closest,tag=Right] at @s run scoreboard players add @s RVel 125
-        execute if entity @e[type=marker,tag=SmoothTurn,tag=Closest,tag=Left] at @s run scoreboard players remove @s RVel 125
-        execute if entity @e[type=marker,tag=SmoothTurn,tag=Closest,tag=Left,tag=Far] at @s run scoreboard players remove @s RVel 125
+        execute if entity @e[type=marker,tag=SmoothTurn,tag=Closest,tag=Right,tag=Far] at @s run scoreboard players operation @s RVel += ChargeTurnSpeed DragonAISettings
+        execute if entity @e[type=marker,tag=SmoothTurn,tag=Closest,tag=Right] at @s run scoreboard players operation @s RVel += ChargeTurnSpeed DragonAISettings
+        execute if entity @e[type=marker,tag=SmoothTurn,tag=Closest,tag=Left] at @s run scoreboard players operation @s RVel -= ChargeTurnSpeed DragonAISettings
+        execute if entity @e[type=marker,tag=SmoothTurn,tag=Closest,tag=Left,tag=Far] at @s run scoreboard players operation @s RVel -= ChargeTurnSpeed DragonAISettings
         execute if entity @e[type=marker,tag=SmoothTurn,tag=Closest,tag=Behind] at @s if score @s RVel matches 0 run scoreboard players add @s RVel 10
         execute if entity @e[type=marker,tag=SmoothTurn,tag=Closest,tag=Behind] at @s if score @s RVel matches 1.. run scoreboard players operation @s RVel += WR Temp
         execute if entity @e[type=marker,tag=SmoothTurn,tag=Closest,tag=Behind] at @s if score @s RVel matches ..-1 run scoreboard players operation @s RVel -= WR Temp
@@ -115,6 +118,7 @@ dir tools {
         execute at @s store result score @s ChargeTargetX run data get entity @e[limit=1,sort=nearest,tag=validdragontarget] Pos[0] 100
         execute at @s store result score @s ChargeTargetY run data get entity @e[limit=1,sort=nearest,tag=validdragontarget] Pos[1] 100
         execute at @s store result score @s ChargeTargetZ run data get entity @e[limit=1,sort=nearest,tag=validdragontarget] Pos[2] 100
+        verbose debug ["Dragon ",{selector:"@s"}," started charge with reason: Function dragonai:tools/forcecharge ran"]
     }
     function forcechargeatentity {
         execute if entity @s[type=player] run tellraw @s "§1This must be run as an Ender Dragon! §rTip: use \"/execute as @e[type=ender_dragon] run function dragonai:tools/forcecharge\" to run this as all currently loaded Ender Dragons."
@@ -123,6 +127,7 @@ dir tools {
         $execute at @s store result score @s ChargeTargetX run data get entity $(selector) Pos[0] 100
         $execute at @s store result score @s ChargeTargetY run data get entity $(selector) Pos[1] 100
         $execute at @s store result score @s ChargeTargetZ run data get entity $(selector) Pos[2] 100
+        verbose debug ["Dragon ",{selector:"@s"}," started charge with reason: Function dragonai:tools/forcechargeatentity ran"]
     }
     function goto {
         execute if entity @s[type=!ender_dragon] run return 0
@@ -132,6 +137,7 @@ dir tools {
         execute at @s store result score @s ChargeTargetY run data get entity @n[tag=goto,type=marker] Pos[1] 100
         execute at @s store result score @s ChargeTargetZ run data get entity @n[tag=goto,type=marker] Pos[2] 100
         kill @e[type=marker,tag=goto]
+        verbose debug ["Dragon ",{selector:"@s"}," started charge with reason: Function dragonai:tools/goto ran"]
     }
     function gotorandom {
         $execute store result storage dragonai:tmp x double 1 run random value $(xl)..$(xh)
@@ -141,6 +147,7 @@ dir tools {
         execute at @s store result score @s ChargeTargetY run data get storage dragonai:tmp y 100
         execute at @s store result score @s ChargeTargetZ run data get storage dragonai:tmp z 100
         scoreboard players set @s DragonChargeTimer 4
+        verbose debug ["Dragon ",{selector:"@s"}," started charge with reason: Function dragonai:tools/gotorandom ran"]
     }
     function kill {
         execute if entity @s[type=player] run tellraw @s "§1This must be run as an Ender Dragon! §rTip: use \"/execute as @e[type=ender_dragon] run function dragonai:tools/kill\" to run this as all currently loaded Ender Dragons."
@@ -151,6 +158,7 @@ dir tools {
         execute if entity @s[type=player] run tellraw @s "§1This must be run as an Ender Dragon! §rTip: use \"/execute as @e[type=ender_dragon] run function dragonai:tools/perch\" to run this as all currently loaded Ender Dragons."
         execute if entity @s[type=!ender_dragon] run return 0
         phase <%Phase_PERCHING%>
+        verbose debug ["Dragon ",{selector:"@s"}," is now perching because dragonai:tools/perch was run."]
     }
     function setphase10 {
         phase <%Phase_CIRCLING%>
@@ -200,6 +208,9 @@ function ai {
     execute if score UseEnhancedAI DragonAISettings matches 1 run function dragonai:customai/enhancedai
     execute if score UseEnhancedAI DragonAISettings matches 0 run scoreboard players operation @s EnhancedAIPhase = @s DragonPhase
     # Prevent the 1.9 mechanics from occurring, unless it is enabled
+    execute if score Allow1.9Behavior DragonAISettings matches 0 unless entity @s[nbt=!{DragonPhase:1},nbt=!{DragonPhase:2},nbt=!{DragonPhase:10},nbt=!{DragonPhase:3},nbt=!{DragonPhase:5},nbt=!{DragonPhase:6},nbt=!{DragonPhase:7}] unless entity @s[nbt=!{HurtTime:0s}] run {
+        verbose debug ["Dragon ",{selector:"@s"}," prevented from entering phase ",{entity:"@s",nbt:"DragonPhase"}]
+    }
     execute if score Allow1.9Behavior DragonAISettings matches 0 unless entity @s[nbt=!{DragonPhase:1},nbt=!{DragonPhase:2},nbt=!{DragonPhase:10},nbt=!{DragonPhase:3},nbt=!{DragonPhase:5},nbt=!{DragonPhase:6},nbt=!{DragonPhase:7}] unless entity @s[nbt=!{HurtTime:0s}] run phase <%Phase_CIRCLING%>
 
 
@@ -214,7 +225,16 @@ function ai {
     execute at @s if score DragonCharging DragonAISettings matches 1 if entity @s[nbt=!{DragonPhase:4},nbt=!{DragonPhase:5},nbt=!{DragonPhase:6},nbt=!{DragonPhase:7},nbt=!{DragonPhase:3}] if score @s RNG <= ChargeRate DragonAISettings unless entity @s[nbt=!{HurtTime:0s}] unless score @s DragonChargeTimer matches 4.. store result score @s ChargeTargetX run data get entity @e[limit=1,sort=nearest,tag=validdragontarget] Pos[0] 100
     execute at @s if score DragonCharging DragonAISettings matches 1 if entity @s[nbt=!{DragonPhase:4},nbt=!{DragonPhase:5},nbt=!{DragonPhase:6},nbt=!{DragonPhase:7},nbt=!{DragonPhase:3}] if score @s RNG <= ChargeRate DragonAISettings unless entity @s[nbt=!{HurtTime:0s}] unless score @s DragonChargeTimer matches 4.. store result score @s ChargeTargetY run data get entity @e[limit=1,sort=nearest,tag=validdragontarget] Pos[1] 100
     execute at @s if score DragonCharging DragonAISettings matches 1 if entity @s[nbt=!{DragonPhase:4},nbt=!{DragonPhase:5},nbt=!{DragonPhase:6},nbt=!{DragonPhase:7},nbt=!{DragonPhase:3}] if score @s RNG <= ChargeRate DragonAISettings unless entity @s[nbt=!{HurtTime:0s}] unless score @s DragonChargeTimer matches 4.. store result score @s ChargeTargetZ run data get entity @e[limit=1,sort=nearest,tag=validdragontarget] Pos[2] 100
+    # This never runs for some reason
+    execute at @s if entity @e[limit=1,sort=nearest,tag=validdragontarget,distance=..125] if score DragonCharging DragonAISettings matches 1 if entity @s[nbt=!{DragonPhase:4},nbt=!{DragonPhase:5},nbt=!{DragonPhase:6},nbt=!{DragonPhase:7},nbt=!{DragonPhase:3}] if score @s RNG <= ChargeRate DragonAISettings unless entity @s[nbt=!{HurtTime:0s}] if score @s DragonChargeTimer matches 4.. run {
+        verbose debug ["Dragon ",{selector:"@s"}," failed to start random charge because its already charging."]
+    }
+    
+    execute at @s if entity @e[limit=1,sort=nearest,tag=validdragontarget,distance=..125] if score DragonCharging DragonAISettings matches 1 if entity @s[nbt=!{DragonPhase:4},nbt=!{DragonPhase:5},nbt=!{DragonPhase:6},nbt=!{DragonPhase:7},nbt=!{DragonPhase:3}] if score @s RNG <= ChargeRate DragonAISettings unless entity @s[nbt=!{HurtTime:0s}] unless score @s DragonChargeTimer matches 4.. run {
+        verbose debug ["Dragon ",{selector:"@s"}," started charge with reason: Random"]
+    }
     execute at @s if entity @e[limit=1,sort=nearest,tag=validdragontarget,distance=..125] if score DragonCharging DragonAISettings matches 1 if entity @s[nbt=!{DragonPhase:4},nbt=!{DragonPhase:5},nbt=!{DragonPhase:6},nbt=!{DragonPhase:7},nbt=!{DragonPhase:3}] if score @s RNG <= ChargeRate DragonAISettings unless entity @s[nbt=!{HurtTime:0s}] unless score @s DragonChargeTimer matches 4.. run scoreboard players set @s DragonChargeTimer 4
+    
 
     execute at @s if score MimicVanillaCharge DragonAISettings matches 0 store result score @s ChargeTargetX run data get entity @e[limit=1,sort=nearest,tag=validdragontarget] Pos[0] 100
     execute at @s if score MimicVanillaCharge DragonAISettings matches 0 store result score @s ChargeTargetY run data get entity @e[limit=1,sort=nearest,tag=validdragontarget] Pos[1] 100
@@ -226,15 +246,27 @@ function ai {
     # Perch more often, if it is enabled
     execute if score FrequentPerching DragonAISettings matches 1 if entity @s[nbt=!{DragonPhase:4},nbt=!{DragonPhase:5},nbt=!{DragonPhase:6},nbt=!{DragonPhase:7},nbt=!{DragonPhase:3},nbt=!{DragonPhase:9}] if score @s PerchTimer matches 1.. unless score @s DragonChargeTimer matches 1.. run scoreboard players remove @s PerchTimer 1
     execute if score FrequentPerching DragonAISettings matches 1 if entity @s[nbt=!{DragonPhase:4},nbt=!{DragonPhase:5},nbt=!{DragonPhase:6},nbt=!{DragonPhase:7},nbt=!{DragonPhase:3},nbt=!{DragonPhase:9}] if score @s RNG matches 980..1000 unless score @s DragonChargeTimer matches 1.. if score @s PerchTimer matches ..0 run phase <%Phase_APPROACHING%>
+    execute if score FrequentPerching DragonAISettings matches 1 if entity @s[nbt=!{DragonPhase:4},nbt=!{DragonPhase:5},nbt=!{DragonPhase:6},nbt=!{DragonPhase:7},nbt=!{DragonPhase:3},nbt=!{DragonPhase:9}] if score @s RNG matches 980..1000 unless score @s DragonChargeTimer matches 1.. if score @s PerchTimer matches ..0 run {
+        verbose debug ["Dragon ",{selector:"@s"}," set to perch forcefully."]
+    }
     execute if score FrequentPerching DragonAISettings matches 1 unless entity @s[nbt=!{DragonPhase:4},nbt=!{DragonPhase:5},nbt=!{DragonPhase:6},nbt=!{DragonPhase:7},nbt=!{DragonPhase:3}] run scoreboard players set @s PerchTimer 100
 
     # Replace vanilla charging, if enabled
-    execute if score ReplaceVanillaCharging DragonAISettings matches 1 if entity @s[nbt={DragonPhase:8}] unless entity @s[nbt=!{HurtTime:0s}] unless score @s DragonChargeTimer matches 1.. run scoreboard players set @s DragonChargeTimer 45
+    execute if score ReplaceVanillaCharging DragonAISettings matches 1 if entity @s[nbt={DragonPhase:8}] unless entity @s[nbt=!{HurtTime:0s}] unless score @s DragonChargeTimer matches 1.. run scoreboard players set @s DragonChargeTimer 4
+    execute if score ReplaceVanillaCharging DragonAISettings matches 1 if entity @s[nbt={DragonPhase:8}] unless entity @s[nbt=!{HurtTime:0s}] unless score @s DragonChargeTimer matches 1.. run {
+        verbose debug ["Dragon ",{selector:"@s"}," started charge with reason: Vanilla Override"]
+    }
     execute if score ReplaceVanillaCharging DragonAISettings matches 1 if entity @s[nbt={DragonPhase:8}] run data modify entity @s DragonPhase set value 0
 
     # Prevent individual vanilla mechanics, if any enabled
+    execute if score DisableVanillaCharge DragonAISettings matches 1 if entity @s[nbt={DragonPhase:8}] run {
+        verbose debug ["Dragon ",{selector:"@s"}," prevented from using vanilla charge."]
+    }
     execute if score DisableVanillaCharge DragonAISettings matches 1 if entity @s[nbt={DragonPhase:8}] run data modify entity @s DragonPhase set value 0
     execute if score DisablePerching DragonAISettings matches 1 unless entity @s[nbt=!{DragonPhase:3},nbt=!{DragonPhase:5},nbt=!{DragonPhase:6},nbt=!{DragonPhase:7}] unless entity @s[nbt=!{HurtTime:0s}] run data merge entity @s {DragonPhase:0}
+    execute if score DisablePerching DragonAISettings matches 1 unless entity @s[nbt=!{DragonPhase:3},nbt=!{DragonPhase:5},nbt=!{DragonPhase:6},nbt=!{DragonPhase:7}] unless entity @s[nbt=!{HurtTime:0s}] run {
+        verbose debug ["Dragon ",{selector:"@s"}," prevented from perching."]
+    }
 
     execute at @s run function dragonai:charging/initcharge
 
@@ -256,6 +288,9 @@ function ai {
     execute unless score UseEnhancedAI DragonAISettings matches 1 if entity @s[nbt={DragonPhase:3}] run scoreboard players set @s DragonChargeTimer 0
 
     # Stop the dragon charging if it takes damage
+    execute if score StopChargeOnHurt DragonAISettings matches 1 if entity @s[nbt={HurtTime:9s}] if score @s DragonChargeTimer matches 1.. run {
+        verbose debug ["Dragon ",{selector:"@s"}," ended charge with reason: Took damage"]
+    }
     execute if score StopChargeOnHurt DragonAISettings matches 1 if entity @s[nbt={HurtTime:9s}] run scoreboard players set @s DragonChargeTimer 0
 
     data merge storage charge {Pos:[0d,0d,0d]}
@@ -275,9 +310,18 @@ function ai {
 
 
     # Stop charging if too far away from target position or is done charging
+    execute at @s if entity @e[limit=1,sort=nearest,distance=..10,tag=DragonChargeTarget] if score @s DragonChargeTimer matches 1 run {
+        verbose debug ["Dragon ",{selector:"@s"}," ended charge with reason: Reached Target"]
+    }
     execute at @s if entity @e[limit=1,sort=nearest,distance=..10,tag=DragonChargeTarget] run scoreboard players remove @s DragonChargeTimer 1
+    execute unless score UseEnhancedAI DragonAISettings matches 1 at @s unless entity @e[type=marker,tag=DragonChargeTarget] if score @s DragonChargeTimer matches 1.. run {
+        verbose debug ["Dragon ",{selector:"@s"}," ended charge with reason: Invalid Target"]
+    }
+    execute unless score UseEnhancedAI DragonAISettings matches 1 at @s unless entity @e[limit=1,sort=nearest,distance=..125,tag=DragonChargeTarget] if entity @e[type=marker,tag=DragonChargeTarget] if score @s DragonChargeTimer matches 1.. run {
+        verbose debug ["Dragon ",{selector:"@s"}," ended charge with reason: Target too far"]
+    }
     execute unless score UseEnhancedAI DragonAISettings matches 1 at @s unless entity @e[limit=1,sort=nearest,distance=..125,tag=DragonChargeTarget] run scoreboard players set @s DragonChargeTimer 0
-
+    
     # Charge
     execute unless data entity @s {DragonPhase:5} unless data entity @s {DragonPhase:6} unless data entity @s {DragonPhase:7} at @s if score @s DragonChargeTimer matches 1.. run function dragonai:charging/calcfly with storage dragonai
 
@@ -308,10 +352,12 @@ tag entity_type dragon_charge_at {
 
 function enable {
     scoreboard players set Enabled DragonAISettings 1
+    verbose debug "Enabled"
 }
 
 function disable {
     scoreboard players set Enabled DragonAISettings 0
+    verbose debug "Disabled"
 }
 
 function load minecraft:load {
@@ -319,14 +365,19 @@ function load minecraft:load {
     tellraw @a {"text":"Customizable Dragon AI is loading...","color":"yellow"}
 
     # Create a "top of 0, 0" marker in all three dimensions.
+    verbose debug "Creating Center Markers"
     execute positioned 0 0 0 in minecraft:overworld unless entity @e[type=marker,tag=center,distance=0..] run summon marker ~ ~ ~ {Tags:["center"]}
     execute positioned 0 0 0 in minecraft:the_nether unless entity @e[type=marker,tag=center,distance=0..] run summon marker ~ ~ ~ {Tags:["center"]}
     execute positioned 0 0 0 in minecraft:the_end unless entity @e[type=marker,tag=center,distance=0..] run summon marker ~ ~ ~ {Tags:["center"]}
+    verbose debug "Finished"
+    verbose debug "Running Old Combat Datapack Check"
     function dragonai:misc/detect-oldcombat
     # MC-Build objective
+    verbose debug "Creating MCB Internal scoreboard"
     scoreboard objectives add mcb.internal dummy
 
     # Create the objectives
+    verbose debug "Creating required scoreboards"
     scoreboard objectives add disablestartup trigger
     scoreboard objectives add RNG dummy
     scoreboard objectives add DragonChargeTimer dummy
@@ -366,9 +417,10 @@ function load minecraft:load {
     scoreboard objectives add DragonPhase dummy
 
     scoreboard objectives add odconfig trigger
+    verbose debug "Finished"
 
     scoreboard players enable @a disablestartup
-
+    verbose debug "Setting values"
     scoreboard players set FrictionUpperFraction DragonAISettings 1
     scoreboard players set FrictionLowerFraction DragonAISettings 1
 
@@ -425,6 +477,9 @@ function load minecraft:load {
     # Setting to make the dragon stop charging whenever it takes damage.
     scoreboard players set StopChargeOnHurt DragonAISettings 0
 
+    # Setting for how fast the dragon turns when charging.
+    scoreboard players set ChargeTurnSpeed DragonAISettings 150
+
     # Enhanced AI Settings
     # Temporarily removed during the transition to mc-build
 
@@ -435,16 +490,21 @@ function load minecraft:load {
     # Amount of "flight cycles" a dragon in phase 0 will go through before changing its phase to another.
     scoreboard players set FlightCyclesBeforePhaseChange DragonAISettings 1
 
+    verbose debug "Finished"
 
+    verbose debug "Running default preset"
     function #dragonai:defaults
 
     # Display a message saying the pack loaded successfully
     tellraw @a {"text":"Customizable Dragon AI has been enabled!","color":"green"}
+    verbose debug "Finished initial setup successfully."
     # schedule function dragonai:welcome 3s
-
+    verbose debug "Running post-load checks"
+    verbose debug "Check for players in #dragonai:dragon_charge_at"
     execute as @e[type=#dragonai:dragon_charge_at] if entity @s[type=player] run {
-        dragonai.LOGGER warn "§6The tag '#dragonai:dragon_charge_at' has been detected to include players, this will cause the dragon to charge at players in ALL GAMEMODES, not just survival and adventure. By default the pack will allow dragons to charge at players in survival and adventure, so adding players to the tag isn't needed."
+        logger warn "§6The tag '#dragonai:dragon_charge_at' has been detected to include players, this will cause the dragon to charge at players in ALL GAMEMODES, not just survival and adventure. By default the pack will allow dragons to charge at players in survival and adventure, so adding players to the tag isn't needed."
     }
+    verbose debug "Finished"
 
 }
 
@@ -456,7 +516,7 @@ dir misc {
     function detect-oldcombat {
         execute store success score HasOldCombat Temp run scoreboard objectives setdisplay sidebar.team.yellow OldCombatSettings
         execute if score HasOldCombat Temp matches 1 run {
-            dragonai.LOGGER log ["Old Combat Datapack detected. I recommend the use of the Customizable Dragon AI 1.8 Preset for the old dragon fight experience. Switching to the preset now."]
+            logger log ["Old Combat Datapack detected. I recommend the use of the Customizable Dragon AI 1.8 Preset for the old dragon fight experience. Switching to the preset now."]
             schedule function *presets/1.8-recommend 1t
         }
         scoreboard objectives setdisplay sidebar.team.yellow
@@ -519,6 +579,7 @@ function config {
 
 dir config {
     function page1 {
+        verbose debug "Loading configuration screen page 1"
         IF ($compilever == "1.21.5") {
             tellraw @s "Customizable Dragon AI Configuration"
             boolean_input <%"Dragon Charging"%> <%"If enabled, the dragon will randomly charge at the nearest player. The chance of the dragon charging is determined by the below setting."%> DragonAISettings DragonCharging dragonai:config/page1
@@ -526,6 +587,7 @@ dir config {
             boolean_input <%"Fix MC-272431"%> <%"Fixes the bug introduced in 1.14 where the dragon goes up and down very slowly, causing erratic behavior as a side effect. Visit https://bugs.mojang.com/browse/MC-272431 for more info."%> DragonAISettings FixVertical dragonai:config/page1
             numeric_input <%"Dragon Vertical Fly Speed"%> <%"The vertical speed increase, as a percent of the normal speed, ADDED ONTO the normal speed (example: a value of 900 will make the dragon move vertically 10x as fast as normal.)"%> DragonAISettings FlySpeed 100 disabled condition <%"if score FixVertical DragonAISettings matches 0"%> dragonai:config/page1
             numeric_input <%"Dragon Vertical Fly Speed (Charging)"%> <%"Same as the above, but applied when charging. This option IS affected by the above option."%> DragonAISettings ChargeFlySpeed 10 dragonai:config/page1
+            numeric_input <%"Dragon Charge Turn Speed"%> <%"The rate at which the dragon turns while charging. This is the amount the dragon accelerates its rotation speed, not a constant rotation speed."%> DragonAISettings ChargeTurnSpeed 25 dragonai:config/page1
             numeric_input <%"Dragon Charging Vertical Smoothing"%> <%"How smooth the dragon's change in vertical velocity is when charging, so the dragon doesn't just instantly snap its' vertical velocity up or down toward the charge target when the dragon starts a charge."%> DragonAISettings VerticalSmoothing 1 dragonai:config/page1
             numeric_input <%"Dragon Charging Horizontal Smoothing"%> <%"Ditto, but for horizontal instead of vertical."%> DragonAISettings HorizontalSmoothing 1 dragonai:config/page1
             boolean_input <%"Allow 1.9+ Mechanics"%> <%"Whether mechanics added in 1.9 can be used. Examples being dragon fireballs, perching, etc."%> DragonAISettings Allow1.9Behavior dragonai:config/page1
@@ -534,12 +596,10 @@ dir config {
             boolean_input <%"Replace Vanilla Charging Mechanics"%> <%"Not to be confused with the below. If true, when the dragon starts a vanilla charge, it uses this datapack's charging mechanics instead of the vanilla charging mechanics."%> DragonAISettings ReplaceVanillaCharging dragonai:config/page1
             boolean_input <%"Mimic Vanilla Charging Mechanics"%> <%"Not to be confused with the above. If true, the charging added by this datapack will mimic the vanilla dragon charging mechanic, where the dragon charges at where the nearest player was when the charge started instead of charging toward where the nearest player currently is for the duration of the charge."%> DragonAISettings MimicVanillaCharge dragonai:config/page1
             boolean_input <%"Bedrock Area Effect Clouds"%> <%"Makes area effect clouds (spawned by any means, such as commands, lingering potions, or dragon's breath) act like they do in Minecraft: Bedrock Edition, where they don't grow/shrink, and dragon's breath area effect clouds take like forever to dissipate"%> DragonAISettings BedrockAEClouds dragonai:config/page1
-            boolean_input <%"Stop Charging When Hurt"%> <%"If true, the dragon will stop charging upon taking any damage. This doesn't affect vanilla's charging mechanic."%> DragonAISettings DisablePerching dragonai:config/page1
+            boolean_input <%"Stop Charging When Hurt"%> <%"If true, the dragon will stop charging upon taking any damage. This doesn't affect vanilla's charging mechanic."%> DragonAISettings StopChargeOnHurt dragonai:config/page1
             boolean_input <%"Enable Debug Visuals"%> <%"For debugging. If true, various particles will visualise certain aspects of the datapack."%> DragonAISettings EnableDebug dragonai:config/page1
             boolean_input <%"Disable Vanilla Charging"%> <%"If true, the dragon will not charge at a player after leaving the perch. Not to be confused with Replace Vanilla Charging."%> DragonAISettings DisableVanillaCharge dragonai:config/page1
-            REPEAT (18,19) as variable {
-                tellraw @s ""
-            }
+            emptyline 1
             pagebar 1 <%"dragonai:config"%>
         } ELSE IF ($compilever == "1.21.4") {
             tellraw @s "Customizable Dragon AI Configuration"
@@ -548,6 +608,7 @@ dir config {
             boolean_input legacy <%"Fix MC-272431"%> <%"Fixes the bug introduced in 1.14 where the dragon goes up and down very slowly, causing erratic behavior as a side effect. Visit https://bugs.mojang.com/browse/MC-272431 for more info."%> DragonAISettings FixVertical dragonai:config/page1
             numeric_input legacy <%"Dragon Vertical Fly Speed"%> <%"The vertical speed increase, as a percent of the normal speed, ADDED ONTO the normal speed (example: a value of 900 will make the dragon move vertically 10x as fast as normal.)"%> DragonAISettings FlySpeed 100 disabled condition <%"if score FixVertical DragonAISettings matches 0"%> dragonai:config/page1
             numeric_input legacy <%"Dragon Vertical Fly Speed (Charging)"%> <%"Same as the above, but applied when charging. This option IS affected by the above option."%> DragonAISettings ChargeFlySpeed 10 dragonai:config/page1
+            numeric_input legacy <%"Dragon Charge Turn Speed"%> <%"The rate at which the dragon turns while charging. This is the amount the dragon accelerates its rotation speed, not a constant rotation speed."%> DragonAISettings ChargeTurnSpeed 25 dragonai:config/page1
             numeric_input legacy <%"Dragon Charging Vertical Smoothing"%> <%"How smooth the dragon's change in vertical velocity is when charging, so the dragon doesn't just instantly snap its' vertical velocity up or down toward the charge target when the dragon starts a charge."%> DragonAISettings VerticalSmoothing 1 dragonai:config/page1
             numeric_input legacy <%"Dragon Charging Horizontal Smoothing"%> <%"Ditto, but for horizontal instead of vertical."%> DragonAISettings HorizontalSmoothing 1 dragonai:config/page1
             boolean_input legacy <%"Allow 1.9+ Mechanics"%> <%"Whether mechanics added in 1.9 can be used. Examples being dragon fireballs, perching, etc."%> DragonAISettings Allow1.9Behavior dragonai:config/page1
@@ -559,9 +620,7 @@ dir config {
             boolean_input legacy <%"Stop Charging When Hurt"%> <%"If true, the dragon will stop charging upon taking any damage. This doesn't affect vanilla's charging mechanic."%> DragonAISettings DisablePerching dragonai:config/page1
             boolean_input legacy <%"Enable Debug Visuals"%> <%"For debugging. If true, various particles will visualise certain aspects of the datapack."%> DragonAISettings EnableDebug dragonai:config/page1
             boolean_input legacy <%"Disable Vanilla Charging"%> <%"If true, the dragon will not charge at a player after leaving the perch. Not to be confused with Replace Vanilla Charging."%> DragonAISettings DisableVanillaCharge dragonai:config/page1
-            REPEAT (18,19) as variable {
-                tellraw @s ""
-            }
+            emptyline 1
             pagebar legacy 1 <%"dragonai:config"%>
         }
     }
@@ -569,11 +628,12 @@ dir config {
 
 dir logging {
     function disabled_warning {
-            dragonai.LOGGER error "§cThe pack is currently disabled, so this change won't take effect until the pack is re-enabled."
+            logger error "§cThe pack is currently disabled, so this change won't take effect until the pack is re-enabled."
     }
 }
 dir presets {
     function 1.8 {
+        verbose debug "Loading Preset 1.8"
         # Beta 1.9 - Release 1.8.9 DragonAISettings preset
         scoreboard players set Allow1.9Behavior DragonAISettings 0
         scoreboard players set FixVertical DragonAISettings 1
@@ -590,10 +650,12 @@ dir presets {
         scoreboard players set Slowdown DragonAISettings 10
         scoreboard players set UseEnhancedAI DragonAISettings 0
         scoreboard players set StopChargeOnHurt DragonAISettings 1
+        verbose debug "Finished"
         # function dragonai:config
         execute unless score Enabled DragonAISettings matches 1 run function *logging/disabled_warning
     }
     function 1.9 {
+        verbose debug "Loading Preset 1.9"
         # 1.9-1.13.2 preset
         scoreboard players set Allow1.9Behavior DragonAISettings 1
         scoreboard players set ReplaceVanillaCharging DragonAISettings 0
@@ -608,10 +670,12 @@ dir presets {
         scoreboard players set Slowdown DragonAISettings 15
         scoreboard players set MimicVanillaCharging DragonAISettings 1
         scoreboard players set UseEnhancedAI DragonAISettings 0
+        verbose debug "Finished"
         # function dragonai:config
         execute unless score Enabled DragonAISettings matches 1 run function *logging/disabled_warning
     }
     function 1.14 {
+        verbose debug "Loading Preset 1.14"
         # 1.14-Now preset
         scoreboard players set Allow1.9Behavior DragonAISettings 1
         scoreboard players set ReplaceVanillaCharging DragonAISettings 0
@@ -626,10 +690,12 @@ dir presets {
         scoreboard players set ChargeFlySpeed DragonAISettings 125
         scoreboard players set MimicVanillaCharging DragonAISettings 1
         scoreboard players set UseEnhancedAI DragonAISettings 0
+        verbose debug "Finished"
         # function dragonai:config
         execute unless score Enabled DragonAISettings matches 1 run function *logging/disabled_warning
     }
     function mixed {
+        verbose debug "Loading Preset Mixed"
         # Allow both the vanilla behavior and the mechanics added in this datapack to coexist
         scoreboard players set Allow1.9Behavior DragonAISettings 1
         scoreboard players set ReplaceVanillaCharging DragonAISettings 0
@@ -645,10 +711,12 @@ dir presets {
         scoreboard players set Slowdown DragonAISettings 15
         scoreboard players set MimicVanillaCharging DragonAISettings 0
         scoreboard players set StopChargeOnHurt DragonAISettings 1
+        verbose debug "Finished"
         # function dragonai:config
         execute unless score Enabled DragonAISettings matches 1 run function *logging/disabled_warning
     }
     function passive {
+        verbose debug "Loading Preset Passive"
         # Make dragons (mostly) passive (can still damage you, but will not purposely attack you)
         scoreboard players set Allow1.9Behavior DragonAISettings 0
         scoreboard players set ReplaceVanillaCharging DragonAISettings 0
@@ -662,11 +730,13 @@ dir presets {
         scoreboard players set VerticalSmoothing DragonAISettings 50
         scoreboard players set Slowdown DragonAISettings 15
         scoreboard players set UseEnhancedAI DragonAISettings 0
+        verbose debug "Finished"
         # function dragonai:config
         execute unless score Enabled DragonAISettings matches 1 run function *logging/disabled_warning
     }
 
     function bedrock {
+        verbose debug "Loading Preset Bedrock"
         # Bedrock-Style
         scoreboard players set Allow1.9Behavior DragonAISettings 1
         scoreboard players set ReplaceVanillaCharging DragonAISettings 0
@@ -681,11 +751,13 @@ dir presets {
         scoreboard players set ChargeFlySpeed DragonAISettings 140
         scoreboard players set MimicVanillaCharging DragonAISettings 1
         scoreboard players set UseEnhancedAI DragonAISettings 0
+        verbose debug "Finished"
         # function dragonai:config
         execute unless score Enabled DragonAISettings matches 1 run function *logging/disabled_warning
     }
 
     function legacy_console {
+        verbose debug "Loading Preset Legacy Console Edition"
         # Legacy Console Edition preset
         # Same as 1.9 but without the vanilla dragon charging
         scoreboard players set Allow1.9Behavior DragonAISettings 1
@@ -702,11 +774,13 @@ dir presets {
         scoreboard players set MimicVanillaCharging DragonAISettings 1
         scoreboard players set DisableVanillaCharge DragonAISettings 1
         scoreboard players set UseEnhancedAI DragonAISettings 0
+        verbose debug "Finished"
         # function dragonai:config
         execute unless score Enabled DragonAISettings matches 1 run function *logging/disabled_warning
 
     }
     function 1.8-recommend {
+        verbose debug "Loading Preset 1.8 (From recommendation)"
         # Beta 1.9 - Release 1.8.9 DragonAISettings preset
         scoreboard players set Allow1.9Behavior DragonAISettings 0
         scoreboard players set FixVertical DragonAISettings 1
@@ -723,9 +797,11 @@ dir presets {
         scoreboard players set Slowdown DragonAISettings 10
         scoreboard players set UseEnhancedAI DragonAISettings 0
         scoreboard players set StopChargeOnHurt DragonAISettings 1
+        verbose debug "Finished"
         execute unless score Enabled DragonAISettings matches 1 run function *logging/disabled_warning
     }
     function loadpreset {
+        verbose debug "Loading Preset Base Startup Preset"
         # 1.9-1.13.2 preset
         # Run on pack load
         scoreboard players set Allow1.9Behavior DragonAISettings 1
@@ -741,27 +817,28 @@ dir presets {
         scoreboard players set Slowdown DragonAISettings 15
         scoreboard players set MimicVanillaCharging DragonAISettings 1
         scoreboard players set UseEnhancedAI DragonAISettings 0
+        verbose debug "Finished"
     }
 }
 
 dir logger_manual {
     function log {
-        dragonai.LOGGER macro log $(text)
+        logger macro log $(text)
     }
     function warn {
-        dragonai.LOGGER macro warn $(text)
+        logger macro warn $(text)
     }
     function error {
-        dragonai.LOGGER macro error $(text)
+        logger macro error $(text)
     }
     function except {
-        dragonai.LOGGER macro except $(text)
+        logger macro except $(text)
     }
     function fatal {
-        dragonai.LOGGER macro fatal $(text)
+        logger macro fatal $(text)
     }
     function debug {
-        dragonai.LOGGER macro debug $(text)
+        logger macro debug $(text)
     }
 
 }

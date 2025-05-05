@@ -102,6 +102,8 @@ scoreboard players set BedrockStyle DragonAISettings 0
 scoreboard players set BedrockAEClouds DragonAISettings 0
 # Setting to make the dragon stop charging whenever it takes damage.
 scoreboard players set StopChargeOnHurt DragonAISettings 0
+# Setting for how fast the dragon turns when charging.
+scoreboard players set ChargeTurnSpeed DragonAISettings 150
 # Enhanced AI Settings
 # Temporarily removed during the transition to mc-build
 # Setting for whether or not the custom "enhanced" ai should be used.
@@ -114,4 +116,4 @@ function #dragonai:defaults
 # Display a message saying the pack loaded successfully
 tellraw @a {"text":"Customizable Dragon AI has been enabled!","color":"green"}
 # schedule function dragonai:welcome 3s
-execute as @e[type=#dragonai:dragon_charge_at] if entity @s[type=player] run function dragonai:zzz/0
+execute as @e[type=#dragonai:dragon_charge_at] if entity @s[type=player] run function dragonai:zzz/11

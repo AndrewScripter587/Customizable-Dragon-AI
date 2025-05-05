@@ -18,10 +18,10 @@ execute at @e[type=marker,limit=1,sort=nearest,tag=DragonChargeRotation] rotated
 execute if score EnableDebug DragonAISettings matches 1 as @e[tag=SmoothTurn,type=marker] at @s run particle electric_spark ~ ~0.5 ~ 0 0 0 0 0 force
 execute at @s as @e[tag=DragonChargeTarget,limit=1,sort=nearest] at @s run tag @e[tag=SmoothTurn,type=marker,limit=1,sort=nearest] add Closest
 execute at @s as @e[tag=DragonChargeRotation,type=marker,limit=1,sort=nearest] facing entity @e[tag=DragonChargeTarget] feet rotated ~ ~ run tp @s ^ ^ ^ ~180 ~
-execute if entity @e[type=marker,tag=SmoothTurn,tag=Closest,tag=Right,tag=Far] at @s run scoreboard players add @s RVel 125
-execute if entity @e[type=marker,tag=SmoothTurn,tag=Closest,tag=Right] at @s run scoreboard players add @s RVel 125
-execute if entity @e[type=marker,tag=SmoothTurn,tag=Closest,tag=Left] at @s run scoreboard players remove @s RVel 125
-execute if entity @e[type=marker,tag=SmoothTurn,tag=Closest,tag=Left,tag=Far] at @s run scoreboard players remove @s RVel 125
+execute if entity @e[type=marker,tag=SmoothTurn,tag=Closest,tag=Right,tag=Far] at @s run scoreboard players operation @s RVel += ChargeTurnSpeed DragonAISettings
+execute if entity @e[type=marker,tag=SmoothTurn,tag=Closest,tag=Right] at @s run scoreboard players operation @s RVel += ChargeTurnSpeed DragonAISettings
+execute if entity @e[type=marker,tag=SmoothTurn,tag=Closest,tag=Left] at @s run scoreboard players operation @s RVel -= ChargeTurnSpeed DragonAISettings
+execute if entity @e[type=marker,tag=SmoothTurn,tag=Closest,tag=Left,tag=Far] at @s run scoreboard players operation @s RVel -= ChargeTurnSpeed DragonAISettings
 execute if entity @e[type=marker,tag=SmoothTurn,tag=Closest,tag=Behind] at @s if score @s RVel matches 0 run scoreboard players add @s RVel 10
 execute if entity @e[type=marker,tag=SmoothTurn,tag=Closest,tag=Behind] at @s if score @s RVel matches 1.. run scoreboard players operation @s RVel += WR Temp
 execute if entity @e[type=marker,tag=SmoothTurn,tag=Closest,tag=Behind] at @s if score @s RVel matches ..-1 run scoreboard players operation @s RVel -= WR Temp

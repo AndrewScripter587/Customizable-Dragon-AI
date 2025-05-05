@@ -1,13 +1,36 @@
 #prefixed with a z to move these functions to the bottom of the /function autocomplete list in game
+#This .mcb file is only used for required JS variables and code, and some functions that can't be achieved using only the template.
 
 import ./z_configmenu.mcbt
 
+<%%
+    chat_width = {
+        chars: 53,
+        pixels: 320
+    };
+    char_width = 6
+
+%%>
 tag functions on_config_button_press {
-    dragonai:enforce_locked_settings
+    oldcombat:enforce_locked_settings
 }
 
 function run_and_return {
     $$(cmd)
     function #z_configmenu:on_config_button_press
     $$(return)
+}
+
+
+
+function empty {
+    tellraw @s ""
+}
+
+function confirm {
+    confirm macro false
+}
+
+function testconfig {
+    tellraw @s [{text:"[Test Confirmation]",click_event:{action:run_command,command:"function z_configmenu:confirm {yes:'tellraw @s \"Yes\"',no:'tellraw @s \"No\"',return:'function z_configmenu:testconfig',namespace:'<%context.namespace%>'}"}}]
 }

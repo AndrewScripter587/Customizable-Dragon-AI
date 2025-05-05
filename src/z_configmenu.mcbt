@@ -1,25 +1,22 @@
+# Main template for configuration menus
+# Most templates here can have legacy as the first parameter to use the pre-1.21.5 text components. Failure to use this will result in these not working on versions earlier than 1.21.5, and always using it will result in the click and hover events not working on 1.21.5.
+# The ones that don't accept legacy as a parameter don't need it as they will work on both post-1.21.5 and pre-1.21.5
+# Intended only for use with config systems that have the settings stored using the scoreboard; NBT Data storages are intended to be supported in the future, but for now only scoreboard config systems are supported.
 
+# Clicking any button that doesn't send the user to another config screen or autofills a command in the user's chatbox will automatically run the specified return function for that setting. Intended to automatically reload the configuration menu when a button is clicked as to reflect the change.
 
+# Some settings have an optional subconfig parameter at the end, this specifies the path of a function (example: mypack:any/path/subconfig-function) that is run when [...] is clicked in the setting. If omitted, the [...] will not show. Intended for settings that have other settings related to/depending on it to be put into a separate menu for better organization and more compact config menus.
+
+# For good examples on how to use this look at the code of my Old Combat Datapack, which uses this config system.
+
+# For boolean inputs; Has 2 possible values, true and false, corresponding to 1 and 0 respectively. If the value isn't 1 or 0, or doesn't exist, the input won't show up at all.
+# Looks like this: Setting: [True] [False]
+# If the value of the setting is 1, [False] will be colored red and [True] will be green.
+# If it is 0, the colors are switched around.
+# Clicking [True] will set the setting to 1, while clicking [False] will set it to 0.
 
 template boolean_input {
-    with name:js desc:js objective:word id:word disabled condition disabledcondition:js disablereason:js returnfunc:raw {
-        execute <%disabledcondition.concat(disabledcondition != null ? " " : "")%>run {
-            execute if score <%id%> <%objective%> matches 1 run {
-                tellraw @s [{text:"<%name%>",color:"gray",hover_event:{action:"show_text",value:["<%desc%>","\n",{text:"This setting is locked.\nReason: <%disablereason%>", color:"gray"},"\n",{text:"<%objective%>/<%id%>",color:"dark_gray",italic:true}]}},{text:": ",color:"white"},{text:"[True]",color:"dark_green",hover_event:{action:"show_text",value:"This setting is locked"}}," ",{text:"[False]",color:"dark_red",hover_event:{action:"show_text",value:"This setting is locked"}}]
-            }        
-            execute if score <%id%> <%objective%> matches 0 run {
-                tellraw @s [{text:"<%name%>",color:"gray",hover_event:{action:"show_text",value:["<%desc%>","\n",{text:"This setting is locked.\nReason: <%disablereason%>", color:"gray"},"\n",{text:"<%objective%>/<%id%>",color:"dark_gray",italic:true}]}},{text:": ",color:"white"},{text:"[True]",color:"dark_red",hover_event:{action:"show_text",value:"This setting is locked"}}," ",{text:"[False]",color:"dark_green",hover_event:{action:"show_text",value:"This setting is locked"}}]
-            }
-        } else execute run {
-            execute if score <%id%> <%objective%> matches 1 run {
-                tellraw @s [{text:"<%name%>",color:"aqua",hover_event:{action:"show_text",value:["<%desc%>","\n",{text:"Currently True", color:"green"},"\n",{text:"<%objective%>/<%id%>",color:"dark_gray",italic:true}]}},{text:": ",color:"white"},{text:"[True]",color:"green",hover_event:{action:"show_text",value:"Click to set to true (1)"},click_event:{action:"run_command",command:"function z_configmenu:run_and_return {cmd:\"scoreboard players set <%id%> <%objective%> 1\",return:\"function <%returnfunc%>\"}"}}," ",{text:"[False]",color:"red",hover_event:{action:"show_text",value:"Click to set to false (0)"},click_event:{action:"run_command",command:"function z_configmenu:run_and_return {cmd:\"scoreboard players set <%id%> <%objective%> 0\",return:\"function <%returnfunc%>\"}"}}]
-            }        
-            execute if score <%id%> <%objective%> matches 0 run {
-                tellraw @s [{text:"<%name%>",color:"aqua",hover_event:{action:"show_text",value:["<%desc%>","\n",{text:"Currently False", color:"red"},"\n",{text:"<%objective%>/<%id%>",color:"dark_gray",italic:true}]}},{text:": ",color:"white"},{text:"[True]",color:"red",hover_event:{action:"show_text",value:"Click to set to true (1)"},click_event:{action:"run_command",command:"function z_configmenu:run_and_return {cmd:\"scoreboard players set <%id%> <%objective%> 1\",return:\"function <%returnfunc%>\"}"}}," ",{text:"[False]",color:"green",hover_event:{action:"show_text",value:"Click to set to false (0)"},click_event:{action:"run_command",command:"function z_configmenu:run_and_return {cmd:\"scoreboard players set <%id%> <%objective%> 0\",return:\"function <%returnfunc%>\"}"}}]
-            }
-        }
-    }
-    with name:js desc:js objective:word id:word disabled condition disabledcondition:js returnfunc:raw {
+    with name:js desc:js objective:word id:word disabled condition disabledcondition:js returnfunc:word {
         execute <%disabledcondition.concat(disabledcondition != null ? " " : "")%>run {
             execute if score <%id%> <%objective%> matches 1 run {
                 tellraw @s [{text:"<%name%>",color:"gray",hover_event:{action:"show_text",value:["<%desc%>","\n",{text:"This setting is locked.", color:"gray"},"\n",{text:"<%objective%>/<%id%>",color:"dark_gray",italic:true}]}},{text:": ",color:"white"},{text:"[True]",color:"dark_green",hover_event:{action:"show_text",value:"This setting is locked"}}," ",{text:"[False]",color:"dark_red",hover_event:{action:"show_text",value:"This setting is locked"}}]
@@ -29,21 +26,32 @@ template boolean_input {
             }
         } else execute run {
             execute if score <%id%> <%objective%> matches 1 run {
-                tellraw @s [{text:"<%name%>",color:"aqua",hover_event:{action:"show_text",value:["<%desc%>","\n",{text:"Currently True", color:"green"},"\n",{text:"<%objective%>/<%id%>",color:"dark_gray",italic:true}]}},{text:": ",color:"white"},{text:"[True]",color:"green",hover_event:{action:"show_text",value:"Click to set to true (1)"},click_event:{action:"run_command",command:"function z_configmenu:run_and_return {cmd:\"scoreboard players set <%id%> <%objective%> 1\",return:\"function <%returnfunc%>\"}"}}," ",{text:"[False]",color:"red",hover_event:{action:"show_text",value:"Click to set to false (0)"},click_event:{action:"run_command",command:"function z_configmenu:run_and_return {cmd:\"scoreboard players set <%id%> <%objective%> 0\",return:\"function <%returnfunc%>\"}"}}]
+                tellraw @s [{text:"<%name%>",color:"aqua",hover_event:{action:"show_text",value:["<%desc%>","\n",{text:"Currently True", color:"green"},"\n",{text:"<%objective%>/<%id%>",color:"dark_gray",italic:true}]}},{text:": ",color:"white"},{text:"[True]",color:"green",hover_event:{action:"show_text",value:"Click to set to true (1)"},click_event:{action:"run_command",command:"/function z_configmenu:run_and_return {cmd:\"scoreboard players set <%id%> <%objective%> 1\",return:\"function <%returnfunc%>\"}"}}," ",{text:"[False]",color:"red",hover_event:{action:"show_text",value:"Click to set to false (0)"},click_event:{action:"run_command",command:"/function z_configmenu:run_and_return {cmd:\"scoreboard players set <%id%> <%objective%> 0\",return:\"function <%returnfunc%>\"}"}}]
             }        
             execute if score <%id%> <%objective%> matches 0 run {
-                tellraw @s [{text:"<%name%>",color:"aqua",hover_event:{action:"show_text",value:["<%desc%>","\n",{text:"Currently False", color:"red"},"\n",{text:"<%objective%>/<%id%>",color:"dark_gray",italic:true}]}},{text:": ",color:"white"},{text:"[True]",color:"red",hover_event:{action:"show_text",value:"Click to set to true (1)"},click_event:{action:"run_command",command:"function z_configmenu:run_and_return {cmd:\"scoreboard players set <%id%> <%objective%> 1\",return:\"function <%returnfunc%>\"}"}}," ",{text:"[False]",color:"green",hover_event:{action:"show_text",value:"Click to set to false (0)"},click_event:{action:"run_command",command:"function z_configmenu:run_and_return {cmd:\"scoreboard players set <%id%> <%objective%> 0\",return:\"function <%returnfunc%>\"}"}}]
+                tellraw @s [{text:"<%name%>",color:"aqua",hover_event:{action:"show_text",value:["<%desc%>","\n",{text:"Currently False", color:"red"},"\n",{text:"<%objective%>/<%id%>",color:"dark_gray",italic:true}]}},{text:": ",color:"white"},{text:"[True]",color:"red",hover_event:{action:"show_text",value:"Click to set to true (1)"},click_event:{action:"run_command",command:"/function z_configmenu:run_and_return {cmd:\"scoreboard players set <%id%> <%objective%> 1\",return:\"function <%returnfunc%>\"}"}}," ",{text:"[False]",color:"green",hover_event:{action:"show_text",value:"Click to set to false (0)"},click_event:{action:"run_command",command:"/function z_configmenu:run_and_return {cmd:\"scoreboard players set <%id%> <%objective%> 0\",return:\"function <%returnfunc%>\"}"}}]
             }
         }
     }
-        with name:js desc:js objective:word id:word disabled true disablereason:js {
-        execute if score <%id%> <%objective%> matches 1 run {
-            tellraw @s [{text:"<%name%>",color:"gray",hover_event:{action:"show_text",value:["<%desc%>","\n",{text:"This setting is locked.\nReason: <%disablereason%>", color:"gray"},"\n",{text:"<%objective%>/<%id%>",color:"dark_gray",italic:true}]}},{text:": ",color:"white"},{text:"[True]",color:"dark_green",hover_event:{action:"show_text",value:"This setting is locked"}}," ",{text:"[False]",color:"dark_red",hover_event:{action:"show_text",value:"This setting is locked"}}]
-        }        
-        execute if score <%id%> <%objective%> matches 0 run {
-            tellraw @s [{text:"<%name%>",color:"gray",hover_event:{action:"show_text",value:["<%desc%>","\n",{text:"This setting is locked.\nReason: <%disablereason%>", color:"gray"},"\n",{text:"<%objective%>/<%id%>",color:"dark_gray",italic:true}]}},{text:": ",color:"white"},{text:"[True]",color:"dark_red",hover_event:{action:"show_text",value:"This setting is locked"}}," ",{text:"[False]",color:"dark_green",hover_event:{action:"show_text",value:"This setting is locked"}}]
+
+    with name:js desc:js objective:word id:word disabled condition disabledcondition:js returnfunc:word subconfig:word {
+        execute <%disabledcondition.concat(disabledcondition != null ? " " : "")%>run {
+            execute if score <%id%> <%objective%> matches 1 run {
+                tellraw @s [{text:"<%name%>",color:"gray",hover_event:{action:"show_text",value:["<%desc%>","\n",{text:"This setting is locked.", color:"gray"},"\n",{text:"<%objective%>/<%id%>",color:"dark_gray",italic:true}]}},{text:": ",color:"white"},{text:"[True]",color:"dark_green",hover_event:{action:"show_text",value:"This setting is locked"}}," ",{text:"[False]",color:"dark_red",hover_event:{action:"show_text",value:"This setting is locked"}}]
+            }        
+            execute if score <%id%> <%objective%> matches 0 run {
+                tellraw @s [{text:"<%name%>",color:"gray",hover_event:{action:"show_text",value:["<%desc%>","\n",{text:"This setting is locked.", color:"gray"},"\n",{text:"<%objective%>/<%id%>",color:"dark_gray",italic:true}]}},{text:": ",color:"white"},{text:"[True]",color:"dark_red",hover_event:{action:"show_text",value:"This setting is locked"}}," ",{text:"[False]",color:"dark_green",hover_event:{action:"show_text",value:"This setting is locked"}}]
+            }
+        } else execute run {
+            execute if score <%id%> <%objective%> matches 1 run {
+                tellraw @s [{text:"<%name%>",color:"aqua",hover_event:{action:"show_text",value:["<%desc%>","\n",{text:"Currently True", color:"green"},"\n",{text:"<%objective%>/<%id%>",color:"dark_gray",italic:true}]}},{text:": ",color:"white"},{text:"[True]",color:"green",hover_event:{action:"show_text",value:"Click to set to true (1)"},click_event:{action:"run_command",command:"/function z_configmenu:run_and_return {cmd:\"scoreboard players set <%id%> <%objective%> 1\",return:\"function <%returnfunc%>\"}"}}," ",{text:"[False]",color:"red",hover_event:{action:"show_text",value:"Click to set to false (0)"},click_event:{action:"run_command",command:"/function z_configmenu:run_and_return {cmd:\"scoreboard players set <%id%> <%objective%> 0\",return:\"function <%returnfunc%>\"}"}}," ",{text:"[...]",color:"white",hover_event:{action:"show_text",value:"This setting has additional configuration options. Click to see and change them."},click_event:{action:"run_command",command:"/function <%subconfig%>"}}]
+            }        
+            execute if score <%id%> <%objective%> matches 0 run {
+                tellraw @s [{text:"<%name%>",color:"aqua",hover_event:{action:"show_text",value:["<%desc%>","\n",{text:"Currently False", color:"red"},"\n",{text:"<%objective%>/<%id%>",color:"dark_gray",italic:true}]}},{text:": ",color:"white"},{text:"[True]",color:"red",hover_event:{action:"show_text",value:"Click to set to true (1)"},click_event:{action:"run_command",command:"/function z_configmenu:run_and_return {cmd:\"scoreboard players set <%id%> <%objective%> 1\",return:\"function <%returnfunc%>\"}"}}," ",{text:"[False]",color:"green",hover_event:{action:"show_text",value:"Click to set to false (0)"},click_event:{action:"run_command",command:"/function z_configmenu:run_and_return {cmd:\"scoreboard players set <%id%> <%objective%> 0\",return:\"function <%returnfunc%>\"}"}}]
+            }
         }
     }
+
 
     with name:js desc:js objective:word id:word disabled true {
         execute if score <%id%> <%objective%> matches 1 run {
@@ -53,43 +61,43 @@ template boolean_input {
             tellraw @s [{text:"<%name%>",color:"gray",hover_event:{action:"show_text",value:["<%desc%>","\n",{text:"This setting is locked.", color:"gray"},"\n",{text:"<%objective%>/<%id%>",color:"dark_gray",italic:true}]}},{text:": ",color:"white"},{text:"[True]",color:"dark_red",hover_event:{action:"show_text",value:"This setting is locked"}}," ",{text:"[False]",color:"dark_green",hover_event:{action:"show_text",value:"This setting is locked"}}]
         }
     }
-    with name:js desc:js objective:word id:word disabled false returnfunc:raw {
+    with name:js desc:js objective:word id:word disabled false returnfunc:word {
         execute if score <%id%> <%objective%> matches 1 run {
-            tellraw @s [{text:"<%name%>",color:"aqua",hover_event:{action:"show_text",value:["<%desc%>","\n",{text:"Currently True", color:"green"},"\n",{text:"<%objective%>/<%id%>",color:"dark_gray",italic:true}]}},{text:": ",color:"white"},{text:"[True]",color:"green",hover_event:{action:"show_text",value:"Click to set to true (1)"},click_event:{action:"run_command",command:"function z_configmenu:run_and_return {cmd:\"scoreboard players set <%id%> <%objective%> 1\",return:\"function <%returnfunc%>\"}"}}," ",{text:"[False]",color:"red",hover_event:{action:"show_text",value:"Click to set to false (0)"},click_event:{action:"run_command",command:"function z_configmenu:run_and_return {cmd:\"scoreboard players set <%id%> <%objective%> 0\",return:\"function <%returnfunc%>\"}"}}]
+            tellraw @s [{text:"<%name%>",color:"aqua",hover_event:{action:"show_text",value:["<%desc%>","\n",{text:"Currently True", color:"green"},"\n",{text:"<%objective%>/<%id%>",color:"dark_gray",italic:true}]}},{text:": ",color:"white"},{text:"[True]",color:"green",hover_event:{action:"show_text",value:"Click to set to true (1)"},click_event:{action:"run_command",command:"/function z_configmenu:run_and_return {cmd:\"scoreboard players set <%id%> <%objective%> 1\",return:\"function <%returnfunc%>\"}"}}," ",{text:"[False]",color:"red",hover_event:{action:"show_text",value:"Click to set to false (0)"},click_event:{action:"run_command",command:"/function z_configmenu:run_and_return {cmd:\"scoreboard players set <%id%> <%objective%> 0\",return:\"function <%returnfunc%>\"}"}}]
         }        
         execute if score <%id%> <%objective%> matches 0 run {
-            tellraw @s [{text:"<%name%>",color:"aqua",hover_event:{action:"show_text",value:["<%desc%>","\n",{text:"Currently False", color:"red"},"\n",{text:"<%objective%>/<%id%>",color:"dark_gray",italic:true}]}},{text:": ",color:"white"},{text:"[True]",color:"red",hover_event:{action:"show_text",value:"Click to set to true (1)"},click_event:{action:"run_command",command:"function z_configmenu:run_and_return {cmd:\"scoreboard players set <%id%> <%objective%> 1\",return:\"function <%returnfunc%>\"}"}}," ",{text:"[False]",color:"green",hover_event:{action:"show_text",value:"Click to set to false (0)"},click_event:{action:"run_command",command:"function z_configmenu:run_and_return {cmd:\"scoreboard players set <%id%> <%objective%> 0\",return:\"function <%returnfunc%>\"}"}}]
+            tellraw @s [{text:"<%name%>",color:"aqua",hover_event:{action:"show_text",value:["<%desc%>","\n",{text:"Currently False", color:"red"},"\n",{text:"<%objective%>/<%id%>",color:"dark_gray",italic:true}]}},{text:": ",color:"white"},{text:"[True]",color:"red",hover_event:{action:"show_text",value:"Click to set to true (1)"},click_event:{action:"run_command",command:"/function z_configmenu:run_and_return {cmd:\"scoreboard players set <%id%> <%objective%> 1\",return:\"function <%returnfunc%>\"}"}}," ",{text:"[False]",color:"green",hover_event:{action:"show_text",value:"Click to set to false (0)"},click_event:{action:"run_command",command:"/function z_configmenu:run_and_return {cmd:\"scoreboard players set <%id%> <%objective%> 0\",return:\"function <%returnfunc%>\"}"}}]
         }
     }
-    with name:js desc:js objective:word id:word returnfunc:raw {
+    with name:js desc:js objective:word id:word disabled false returnfunc:word subconfig:word {
         execute if score <%id%> <%objective%> matches 1 run {
-            tellraw @s [{text:"<%name%>",color:"aqua",hover_event:{action:"show_text",value:["<%desc%>","\n",{text:"Currently True", color:"green"},"\n",{text:"<%objective%>/<%id%>",color:"dark_gray",italic:true}]}},{text:": ",color:"white"},{text:"[True]",color:"green",hover_event:{action:"show_text",value:"Click to set to true (1)"},click_event:{action:"run_command",command:"function z_configmenu:run_and_return {cmd:\"scoreboard players set <%id%> <%objective%> 1\",return:\"function <%returnfunc%>\"}"}}," ",{text:"[False]",color:"red",hover_event:{action:"show_text",value:"Click to set to false (0)"},click_event:{action:"run_command",command:"function z_configmenu:run_and_return {cmd:\"scoreboard players set <%id%> <%objective%> 0\",return:\"function <%returnfunc%>\"}"}}]
+            tellraw @s [{text:"<%name%>",color:"aqua",hover_event:{action:"show_text",value:["<%desc%>","\n",{text:"Currently True", color:"green"},"\n",{text:"<%objective%>/<%id%>",color:"dark_gray",italic:true}]}},{text:": ",color:"white"},{text:"[True]",color:"green",hover_event:{action:"show_text",value:"Click to set to true (1)"},click_event:{action:"run_command",command:"/function z_configmenu:run_and_return {cmd:\"scoreboard players set <%id%> <%objective%> 1\",return:\"function <%returnfunc%>\"}"}}," ",{text:"[False]",color:"red",hover_event:{action:"show_text",value:"Click to set to false (0)"},click_event:{action:"run_command",command:"/function z_configmenu:run_and_return {cmd:\"scoreboard players set <%id%> <%objective%> 0\",return:\"function <%returnfunc%>\"}"}}," ",{text:"[...]",color:"white",hover_event:{action:"show_text",value:"This setting has additional configuration options. Click to see and change them."},click_event:{action:"run_command",command:"/function <%subconfig%>"}}]
         }        
         execute if score <%id%> <%objective%> matches 0 run {
-            tellraw @s [{text:"<%name%>",color:"aqua",hover_event:{action:"show_text",value:["<%desc%>","\n",{text:"Currently False", color:"red"},"\n",{text:"<%objective%>/<%id%>",color:"dark_gray",italic:true}]}},{text:": ",color:"white"},{text:"[True]",color:"red",hover_event:{action:"show_text",value:"Click to set to true (1)"},click_event:{action:"run_command",command:"function z_configmenu:run_and_return {cmd:\"scoreboard players set <%id%> <%objective%> 1\",return:\"function <%returnfunc%>\"}"}}," ",{text:"[False]",color:"green",hover_event:{action:"show_text",value:"Click to set to false (0)"},click_event:{action:"run_command",command:"function z_configmenu:run_and_return {cmd:\"scoreboard players set <%id%> <%objective%> 0\",return:\"function <%returnfunc%>\"}"}}]
+            tellraw @s [{text:"<%name%>",color:"aqua",hover_event:{action:"show_text",value:["<%desc%>","\n",{text:"Currently False", color:"red"},"\n",{text:"<%objective%>/<%id%>",color:"dark_gray",italic:true}]}},{text:": ",color:"white"},{text:"[True]",color:"red",hover_event:{action:"show_text",value:"Click to set to true (1)"},click_event:{action:"run_command",command:"/function z_configmenu:run_and_return {cmd:\"scoreboard players set <%id%> <%objective%> 1\",return:\"function <%returnfunc%>\"}"}}," ",{text:"[False]",color:"green",hover_event:{action:"show_text",value:"Click to set to false (0)"},click_event:{action:"run_command",command:"/function z_configmenu:run_and_return {cmd:\"scoreboard players set <%id%> <%objective%> 0\",return:\"function <%returnfunc%>\"}"}}]
+        }
+    }
+
+    with name:js desc:js objective:word id:word returnfunc:word {
+        execute if score <%id%> <%objective%> matches 1 run {
+            tellraw @s [{text:"<%name%>",color:"aqua",hover_event:{action:"show_text",value:["<%desc%>","\n",{text:"Currently True", color:"green"},"\n",{text:"<%objective%>/<%id%>",color:"dark_gray",italic:true}]}},{text:": ",color:"white"},{text:"[True]",color:"green",hover_event:{action:"show_text",value:"Click to set to true (1)"},click_event:{action:"run_command",command:"/function z_configmenu:run_and_return {cmd:\"scoreboard players set <%id%> <%objective%> 1\",return:\"function <%returnfunc%>\"}"}}," ",{text:"[False]",color:"red",hover_event:{action:"show_text",value:"Click to set to false (0)"},click_event:{action:"run_command",command:"/function z_configmenu:run_and_return {cmd:\"scoreboard players set <%id%> <%objective%> 0\",return:\"function <%returnfunc%>\"}"}}]
+        }        
+        execute if score <%id%> <%objective%> matches 0 run {
+            tellraw @s [{text:"<%name%>",color:"aqua",hover_event:{action:"show_text",value:["<%desc%>","\n",{text:"Currently False", color:"red"},"\n",{text:"<%objective%>/<%id%>",color:"dark_gray",italic:true}]}},{text:": ",color:"white"},{text:"[True]",color:"red",hover_event:{action:"show_text",value:"Click to set to true (1)"},click_event:{action:"run_command",command:"/function z_configmenu:run_and_return {cmd:\"scoreboard players set <%id%> <%objective%> 1\",return:\"function <%returnfunc%>\"}"}}," ",{text:"[False]",color:"green",hover_event:{action:"show_text",value:"Click to set to false (0)"},click_event:{action:"run_command",command:"/function z_configmenu:run_and_return {cmd:\"scoreboard players set <%id%> <%objective%> 0\",return:\"function <%returnfunc%>\"}"}}]
+        }
+    }
+
+    with name:js desc:js objective:word id:word returnfunc:word subconfig:word {
+        execute if score <%id%> <%objective%> matches 1 run {
+            tellraw @s [{text:"<%name%>",color:"aqua",hover_event:{action:"show_text",value:["<%desc%>","\n",{text:"Currently True", color:"green"},"\n",{text:"<%objective%>/<%id%>",color:"dark_gray",italic:true}]}},{text:": ",color:"white"},{text:"[True]",color:"green",hover_event:{action:"show_text",value:"Click to set to true (1)"},click_event:{action:"run_command",command:"/function z_configmenu:run_and_return {cmd:\"scoreboard players set <%id%> <%objective%> 1\",return:\"function <%returnfunc%>\"}"}}," ",{text:"[False]",color:"red",hover_event:{action:"show_text",value:"Click to set to false (0)"},click_event:{action:"run_command",command:"/function z_configmenu:run_and_return {cmd:\"scoreboard players set <%id%> <%objective%> 0\",return:\"function <%returnfunc%>\"}"}}," ",{text:"[...]",color:"white",hover_event:{action:"show_text",value:"This setting has additional configuration options. Click to see and change them."},click_event:{action:"run_command",command:"/function <%subconfig%>"}}]
+        }        
+        execute if score <%id%> <%objective%> matches 0 run {
+            tellraw @s [{text:"<%name%>",color:"aqua",hover_event:{action:"show_text",value:["<%desc%>","\n",{text:"Currently False", color:"red"},"\n",{text:"<%objective%>/<%id%>",color:"dark_gray",italic:true}]}},{text:": ",color:"white"},{text:"[True]",color:"red",hover_event:{action:"show_text",value:"Click to set to true (1)"},click_event:{action:"run_command",command:"/function z_configmenu:run_and_return {cmd:\"scoreboard players set <%id%> <%objective%> 1\",return:\"function <%returnfunc%>\"}"}}," ",{text:"[False]",color:"green",hover_event:{action:"show_text",value:"Click to set to false (0)"},click_event:{action:"run_command",command:"/function z_configmenu:run_and_return {cmd:\"scoreboard players set <%id%> <%objective%> 0\",return:\"function <%returnfunc%>\"}"}}]
         }
     }
 
 
-
-    with legacy name:js desc:js objective:word id:word disabled condition disabledcondition:js disablereason:js returnfunc:raw {
-        execute <%disabledcondition.concat(disabledcondition != null ? " " : "")%>run {
-            execute if score <%id%> <%objective%> matches 1 run {
-                tellraw @s [{"text":"<%name%>","color":"gray","hoverEvent":{"action":"show_text","value":["<%desc%>","\n",{"text":"This setting is locked.\nReason: <%disablereason%>", "color":"gray"},"\n",{"text":"<%objective%>/<%id%>","color":"dark_gray","italic":true}]}},{"text":": ","color":"white"},{"text":"[True]","color":"dark_green","hoverEvent":{"action":"show_text","value":"This setting is locked"}}," ",{"text":"[False]","color":"dark_red","hoverEvent":{"action":"show_text","value":"This setting is locked"}}]
-            }        
-            execute if score <%id%> <%objective%> matches 0 run {
-                tellraw @s [{"text":"<%name%>","color":"gray","hoverEvent":{"action":"show_text","value":["<%desc%>","\n",{"text":"This setting is locked.\nReason: <%disablereason%>", "color":"gray"},"\n",{"text":"<%objective%>/<%id%>","color":"dark_gray","italic":true}]}},{"text":": ","color":"white"},{"text":"[True]","color":"dark_red","hoverEvent":{"action":"show_text","value":"This setting is locked"}}," ",{"text":"[False]","color":"dark_green","hoverEvent":{"action":"show_text","value":"This setting is locked"}}]
-            }
-        } else execute run {
-            execute if score <%id%> <%objective%> matches 1 run {
-                tellraw @s [{"text":"<%name%>","color":"aqua","hoverEvent":{"action":"show_text","value":["<%desc%>","\n",{"text":"Currently True", "color":"green"},"\n",{"text":"<%objective%>/<%id%>","color":"dark_gray","italic":true}]}},{"text":": ","color":"white"},{"text":"[True]","color":"green","hoverEvent":{"action":"show_text","value":"Click to set to true (1)"},"clickEvent":{"action":"run_command","value":"/function z_configmenu:run_and_return {cmd:\"scoreboard players set <%id%> <%objective%> 1\",return:\"function <%returnfunc%>\"}"}}," ",{"text":"[False]","color":"red","hoverEvent":{"action":"show_text","value":"Click to set to false (0)"},"clickEvent":{"action":"run_command","value":"/function z_configmenu:run_and_return {cmd:\"scoreboard players set <%id%> <%objective%> 0\",return:\"function <%returnfunc%>\"}"}}]
-            }        
-            execute if score <%id%> <%objective%> matches 0 run {
-                tellraw @s [{"text":"<%name%>","color":"aqua","hoverEvent":{"action":"show_text","value":["<%desc%>","\n",{"text":"Currently False", "color":"red"},"\n",{"text":"<%objective%>/<%id%>","color":"dark_gray","italic":true}]}},{"text":": ","color":"white"},{"text":"[True]","color":"red","hoverEvent":{"action":"show_text","value":"Click to set to true (1)"},"clickEvent":{"action":"run_command","value":"/function z_configmenu:run_and_return {cmd:\"scoreboard players set <%id%> <%objective%> 1\",return:\"function <%returnfunc%>\"}"}}," ",{"text":"[False]","color":"green","hoverEvent":{"action":"show_text","value":"Click to set to false (0)"},"clickEvent":{"action":"run_command","value":"/function z_configmenu:run_and_return {cmd:\"scoreboard players set <%id%> <%objective%> 0\",return:\"function <%returnfunc%>\"}"}}]
-            }
-        }
-    }
-    with legacy name:js desc:js objective:word id:word disabled condition disabledcondition:js returnfunc:raw {
+    with legacy name:js desc:js objective:word id:word disabled condition disabledcondition:js returnfunc:word {
         execute <%disabledcondition.concat(disabledcondition != null ? " " : "")%>run {
             execute if score <%id%> <%objective%> matches 1 run {
                 tellraw @s [{"text":"<%name%>","color":"gray","hoverEvent":{"action":"show_text","value":["<%desc%>","\n",{"text":"This setting is locked.", "color":"gray"},"\n",{"text":"<%objective%>/<%id%>","color":"dark_gray","italic":true}]}},{"text":": ","color":"white"},{"text":"[True]","color":"dark_green","hoverEvent":{"action":"show_text","value":"This setting is locked"}}," ",{"text":"[False]","color":"dark_red","hoverEvent":{"action":"show_text","value":"This setting is locked"}}]
@@ -106,14 +114,25 @@ template boolean_input {
             }
         }
     }
-        with legacy name:js desc:js objective:word id:word disabled true disablereason:js {
-        execute if score <%id%> <%objective%> matches 1 run {
-            tellraw @s [{"text":"<%name%>","color":"gray","hoverEvent":{"action":"show_text","value":["<%desc%>","\n",{"text":"This setting is locked.\nReason: <%disablereason%>", "color":"gray"},"\n",{"text":"<%objective%>/<%id%>","color":"dark_gray","italic":true}]}},{"text":": ","color":"white"},{"text":"[True]","color":"dark_green","hoverEvent":{"action":"show_text","value":"This setting is locked"}}," ",{"text":"[False]","color":"dark_red","hoverEvent":{"action":"show_text","value":"This setting is locked"}}]
-        }        
-        execute if score <%id%> <%objective%> matches 0 run {
-            tellraw @s [{"text":"<%name%>","color":"gray","hoverEvent":{"action":"show_text","value":["<%desc%>","\n",{"text":"This setting is locked.\nReason: <%disablereason%>", "color":"gray"},"\n",{"text":"<%objective%>/<%id%>","color":"dark_gray","italic":true}]}},{"text":": ","color":"white"},{"text":"[True]","color":"dark_red","hoverEvent":{"action":"show_text","value":"This setting is locked"}}," ",{"text":"[False]","color":"dark_green","hoverEvent":{"action":"show_text","value":"This setting is locked"}}]
+
+    with legacy name:js desc:js objective:word id:word disabled condition disabledcondition:js returnfunc:word subconfig:word {
+        execute <%disabledcondition.concat(disabledcondition != null ? " " : "")%>run {
+            execute if score <%id%> <%objective%> matches 1 run {
+                tellraw @s [{"text":"<%name%>","color":"gray","hoverEvent":{"action":"show_text","value":["<%desc%>","\n",{"text":"This setting is locked.", "color":"gray"},"\n",{"text":"<%objective%>/<%id%>","color":"dark_gray","italic":true}]}},{"text":": ","color":"white"},{"text":"[True]","color":"dark_green","hoverEvent":{"action":"show_text","value":"This setting is locked"}}," ",{"text":"[False]","color":"dark_red","hoverEvent":{"action":"show_text","value":"This setting is locked"}}]
+            }        
+            execute if score <%id%> <%objective%> matches 0 run {
+                tellraw @s [{"text":"<%name%>","color":"gray","hoverEvent":{"action":"show_text","value":["<%desc%>","\n",{"text":"This setting is locked.", "color":"gray"},"\n",{"text":"<%objective%>/<%id%>","color":"dark_gray","italic":true}]}},{"text":": ","color":"white"},{"text":"[True]","color":"dark_red","hoverEvent":{"action":"show_text","value":"This setting is locked"}}," ",{"text":"[False]","color":"dark_green","hoverEvent":{"action":"show_text","value":"This setting is locked"}}]
+            }
+        } else execute run {
+            execute if score <%id%> <%objective%> matches 1 run {
+                tellraw @s [{"text":"<%name%>","color":"aqua","hoverEvent":{"action":"show_text","value":["<%desc%>","\n",{"text":"Currently True", "color":"green"},"\n",{"text":"<%objective%>/<%id%>","color":"dark_gray","italic":true}]}},{"text":": ","color":"white"},{"text":"[True]","color":"green","hoverEvent":{"action":"show_text","value":"Click to set to true (1)"},"clickEvent":{"action":"run_command","value":"/function z_configmenu:run_and_return {cmd:\"scoreboard players set <%id%> <%objective%> 1\",return:\"function <%returnfunc%>\"}"}}," ",{"text":"[False]","color":"red","hoverEvent":{"action":"show_text","value":"Click to set to false (0)"},"clickEvent":{"action":"run_command","value":"/function z_configmenu:run_and_return {cmd:\"scoreboard players set <%id%> <%objective%> 0\",return:\"function <%returnfunc%>\"}"}}," ",{"text":"[...]","color":"white","hoverEvent":{"action":"show_text","value":"This setting has additional configuration options. Click to see and change them."},"clickEvent":{"action":"run_command","value":"/function <%subconfig%>"}}]
+            }        
+            execute if score <%id%> <%objective%> matches 0 run {
+                tellraw @s [{"text":"<%name%>","color":"aqua","hoverEvent":{"action":"show_text","value":["<%desc%>","\n",{"text":"Currently False", "color":"red"},"\n",{"text":"<%objective%>/<%id%>","color":"dark_gray","italic":true}]}},{"text":": ","color":"white"},{"text":"[True]","color":"red","hoverEvent":{"action":"show_text","value":"Click to set to true (1)"},"clickEvent":{"action":"run_command","value":"/function z_configmenu:run_and_return {cmd:\"scoreboard players set <%id%> <%objective%> 1\",return:\"function <%returnfunc%>\"}"}}," ",{"text":"[False]","color":"green","hoverEvent":{"action":"show_text","value":"Click to set to false (0)"},"clickEvent":{"action":"run_command","value":"/function z_configmenu:run_and_return {cmd:\"scoreboard players set <%id%> <%objective%> 0\",return:\"function <%returnfunc%>\"}"}}]
+            }
         }
     }
+
 
     with legacy name:js desc:js objective:word id:word disabled true {
         execute if score <%id%> <%objective%> matches 1 run {
@@ -123,7 +142,7 @@ template boolean_input {
             tellraw @s [{"text":"<%name%>","color":"gray","hoverEvent":{"action":"show_text","value":["<%desc%>","\n",{"text":"This setting is locked.", "color":"gray"},"\n",{"text":"<%objective%>/<%id%>","color":"dark_gray","italic":true}]}},{"text":": ","color":"white"},{"text":"[True]","color":"dark_red","hoverEvent":{"action":"show_text","value":"This setting is locked"}}," ",{"text":"[False]","color":"dark_green","hoverEvent":{"action":"show_text","value":"This setting is locked"}}]
         }
     }
-    with legacy name:js desc:js objective:word id:word disabled false returnfunc:raw {
+    with legacy name:js desc:js objective:word id:word disabled false returnfunc:word {
         execute if score <%id%> <%objective%> matches 1 run {
             tellraw @s [{"text":"<%name%>","color":"aqua","hoverEvent":{"action":"show_text","value":["<%desc%>","\n",{"text":"Currently True", "color":"green"},"\n",{"text":"<%objective%>/<%id%>","color":"dark_gray","italic":true}]}},{"text":": ","color":"white"},{"text":"[True]","color":"green","hoverEvent":{"action":"show_text","value":"Click to set to true (1)"},"clickEvent":{"action":"run_command","value":"/function z_configmenu:run_and_return {cmd:\"scoreboard players set <%id%> <%objective%> 1\",return:\"function <%returnfunc%>\"}"}}," ",{"text":"[False]","color":"red","hoverEvent":{"action":"show_text","value":"Click to set to false (0)"},"clickEvent":{"action":"run_command","value":"/function z_configmenu:run_and_return {cmd:\"scoreboard players set <%id%> <%objective%> 0\",return:\"function <%returnfunc%>\"}"}}]
         }        
@@ -131,7 +150,17 @@ template boolean_input {
             tellraw @s [{"text":"<%name%>","color":"aqua","hoverEvent":{"action":"show_text","value":["<%desc%>","\n",{"text":"Currently False", "color":"red"},"\n",{"text":"<%objective%>/<%id%>","color":"dark_gray","italic":true}]}},{"text":": ","color":"white"},{"text":"[True]","color":"red","hoverEvent":{"action":"show_text","value":"Click to set to true (1)"},"clickEvent":{"action":"run_command","value":"/function z_configmenu:run_and_return {cmd:\"scoreboard players set <%id%> <%objective%> 1\",return:\"function <%returnfunc%>\"}"}}," ",{"text":"[False]","color":"green","hoverEvent":{"action":"show_text","value":"Click to set to false (0)"},"clickEvent":{"action":"run_command","value":"/function z_configmenu:run_and_return {cmd:\"scoreboard players set <%id%> <%objective%> 0\",return:\"function <%returnfunc%>\"}"}}]
         }
     }
-    with legacy name:js desc:js objective:word id:word returnfunc:raw {
+
+    with legacy name:js desc:js objective:word id:word disabled false returnfunc:word subconfig:word {
+        execute if score <%id%> <%objective%> matches 1 run {
+            tellraw @s [{"text":"<%name%>","color":"aqua","hoverEvent":{"action":"show_text","value":["<%desc%>","\n",{"text":"Currently True", "color":"green"},"\n",{"text":"<%objective%>/<%id%>","color":"dark_gray","italic":true}]}},{"text":": ","color":"white"},{"text":"[True]","color":"green","hoverEvent":{"action":"show_text","value":"Click to set to true (1)"},"clickEvent":{"action":"run_command","value":"/function z_configmenu:run_and_return {cmd:\"scoreboard players set <%id%> <%objective%> 1\",return:\"function <%returnfunc%>\"}"}}," ",{"text":"[False]","color":"red","hoverEvent":{"action":"show_text","value":"Click to set to false (0)"},"clickEvent":{"action":"run_command","value":"/function z_configmenu:run_and_return {cmd:\"scoreboard players set <%id%> <%objective%> 0\",return:\"function <%returnfunc%>\"}"}}," ",{"text":"[...]","color":"white","hoverEvent":{"action":"show_text","value":"This setting has additional configuration options. Click to see and change them."},"clickEvent":{"action":"run_command","value":"/function <%subconfig%>"}}]
+        }        
+        execute if score <%id%> <%objective%> matches 0 run {
+            tellraw @s [{"text":"<%name%>","color":"aqua","hoverEvent":{"action":"show_text","value":["<%desc%>","\n",{"text":"Currently False", "color":"red"},"\n",{"text":"<%objective%>/<%id%>","color":"dark_gray","italic":true}]}},{"text":": ","color":"white"},{"text":"[True]","color":"red","hoverEvent":{"action":"show_text","value":"Click to set to true (1)"},"clickEvent":{"action":"run_command","value":"/function z_configmenu:run_and_return {cmd:\"scoreboard players set <%id%> <%objective%> 1\",return:\"function <%returnfunc%>\"}"}}," ",{"text":"[False]","color":"green","hoverEvent":{"action":"show_text","value":"Click to set to false (0)"},"clickEvent":{"action":"run_command","value":"/function z_configmenu:run_and_return {cmd:\"scoreboard players set <%id%> <%objective%> 0\",return:\"function <%returnfunc%>\"}"}}]
+        }
+    }
+
+    with legacy name:js desc:js objective:word id:word returnfunc:word {
         execute if score <%id%> <%objective%> matches 1 run {
             tellraw @s [{"text":"<%name%>","color":"aqua","hoverEvent":{"action":"show_text","value":["<%desc%>","\n",{"text":"Currently True", "color":"green"},"\n",{"text":"<%objective%>/<%id%>","color":"dark_gray","italic":true}]}},{"text":": ","color":"white"},{"text":"[True]","color":"green","hoverEvent":{"action":"show_text","value":"Click to set to true (1)"},"clickEvent":{"action":"run_command","value":"/function z_configmenu:run_and_return {cmd:\"scoreboard players set <%id%> <%objective%> 1\",return:\"function <%returnfunc%>\"}"}}," ",{"text":"[False]","color":"red","hoverEvent":{"action":"show_text","value":"Click to set to false (0)"},"clickEvent":{"action":"run_command","value":"/function z_configmenu:run_and_return {cmd:\"scoreboard players set <%id%> <%objective%> 0\",return:\"function <%returnfunc%>\"}"}}]
         }        
@@ -139,65 +168,89 @@ template boolean_input {
             tellraw @s [{"text":"<%name%>","color":"aqua","hoverEvent":{"action":"show_text","value":["<%desc%>","\n",{"text":"Currently False", "color":"red"},"\n",{"text":"<%objective%>/<%id%>","color":"dark_gray","italic":true}]}},{"text":": ","color":"white"},{"text":"[True]","color":"red","hoverEvent":{"action":"show_text","value":"Click to set to true (1)"},"clickEvent":{"action":"run_command","value":"/function z_configmenu:run_and_return {cmd:\"scoreboard players set <%id%> <%objective%> 1\",return:\"function <%returnfunc%>\"}"}}," ",{"text":"[False]","color":"green","hoverEvent":{"action":"show_text","value":"Click to set to false (0)"},"clickEvent":{"action":"run_command","value":"/function z_configmenu:run_and_return {cmd:\"scoreboard players set <%id%> <%objective%> 0\",return:\"function <%returnfunc%>\"}"}}]
         }
     }
+    with legacy name:js desc:js objective:word id:word returnfunc:word subconfig:word {
+        execute if score <%id%> <%objective%> matches 1 run {
+            tellraw @s [{"text":"<%name%>","color":"aqua","hoverEvent":{"action":"show_text","value":["<%desc%>","\n",{"text":"Currently True", "color":"green"},"\n",{"text":"<%objective%>/<%id%>","color":"dark_gray","italic":true}]}},{"text":": ","color":"white"},{"text":"[True]","color":"green","hoverEvent":{"action":"show_text","value":"Click to set to true (1)"},"clickEvent":{"action":"run_command","value":"/function z_configmenu:run_and_return {cmd:\"scoreboard players set <%id%> <%objective%> 1\",return:\"function <%returnfunc%>\"}"}}," ",{"text":"[False]","color":"red","hoverEvent":{"action":"show_text","value":"Click to set to false (0)"},"clickEvent":{"action":"run_command","value":"/function z_configmenu:run_and_return {cmd:\"scoreboard players set <%id%> <%objective%> 0\",return:\"function <%returnfunc%>\"}"}}," ",{"text":"[...]","color":"white","hoverEvent":{"action":"show_text","value":"This setting has additional configuration options. Click to see and change them."},"clickEvent":{"action":"run_command","value":"/function <%subconfig%>"}}]
+        }        
+        execute if score <%id%> <%objective%> matches 0 run {
+            tellraw @s [{"text":"<%name%>","color":"aqua","hoverEvent":{"action":"show_text","value":["<%desc%>","\n",{"text":"Currently False", "color":"red"},"\n",{"text":"<%objective%>/<%id%>","color":"dark_gray","italic":true}]}},{"text":": ","color":"white"},{"text":"[True]","color":"red","hoverEvent":{"action":"show_text","value":"Click to set to true (1)"},"clickEvent":{"action":"run_command","value":"/function z_configmenu:run_and_return {cmd:\"scoreboard players set <%id%> <%objective%> 1\",return:\"function <%returnfunc%>\"}"}}," ",{"text":"[False]","color":"green","hoverEvent":{"action":"show_text","value":"Click to set to false (0)"},"clickEvent":{"action":"run_command","value":"/function z_configmenu:run_and_return {cmd:\"scoreboard players set <%id%> <%objective%> 0\",return:\"function <%returnfunc%>\"}"}}]
+        }
+    }
+
 
 
 }
 
+# For numeric inputs
+# Any integer is supported.
+# Looks like this: Setting: Value [-step] [=] [+step] [...]
+# Step is replaced with the value from the step input
+# When [-] is clicked, removes the step amount from the setting's value, and [+] does the opposite.
+# When [=] is clicked, it puts the command '/scoreboard players set (id) (objective) 0' into the player's chatbox. The user then can set the value to whatever they want.
+
 template numeric_input {
-    with name:js desc:js objective:word id:word step:float disabled condition disabledcondition:js disablereason:js returnfunc:raw {
-        execute <%disabledcondition.concat(disabledcondition != null ? " " : "")%>run {
-            tellraw @s [{text:"<%name%>",color:"gray",hover_event:{action:"show_text",value:["<%desc%>","\n",{text:"This setting is locked.\nReason: <%disablereason%>", color:"gray"},"\n",{text:"<%objective%>/<%id%>",color:"dark_gray",italic:true}]}},{text:": ",color:"white"},{score:{name:"<%id%>",objective:"<%objective%>"},color:"green"}," ",{text:"[-<%step%>]",color:"dark_red",hover_event:{action:"show_text",value:"This setting is locked"}}," ",{text:"[=]",color:"gold",hover_event:{action:"show_text",value:"This setting is disabled"}}," ",{text:"[+<%step%>]",color:"dark_green",hover_event:{action:"show_text",value:"This setting is disabled"}}]
-        } else execute run {
-            tellraw @s [{text:"<%name%>",color:"aqua",hover_event:{action:"show_text",value:["<%desc%>","\n",{text:"<%objective%>/<%id%>",color:"dark_gray",italic:true}]}},{text:": ",color:"white"},{score:{name:"<%id%>",objective:"<%objective%>"},color:"green"}," ",{text:"[-<%step%>]",color:"red",hover_event:{action:"show_text",value:"Click to subtract <%step%>"},click_event:{action:"run_command",command:"function z_configmenu:run_and_return {cmd:\"scoreboard players remove <%id%> <%objective%> <%step%>\",return:\"function <%returnfunc%>\"}"}}," ",{text:"[=]",color:"yellow",hover_event:{action:"show_text",value:"Click to set a value manually (reopen the config manually after doing so)"},click_event:{action:"suggest_command",command:"/scoreboard players set <%id%> <%objective%> 0"}}," ",{text:"[+<%step%>]",color:"green",hover_event:{action:"show_text",value:"Click to add <%step%>"},click_event:{action:"run_command",command:"function z_configmenu:run_and_return {cmd:\"scoreboard players add <%id%> <%objective%> <%step%>\",return:\"function <%returnfunc%>\"}"}}]
-        }
-    }
-    with name:js desc:js objective:word id:word step:float disabled condition disabledcondition:js returnfunc:raw {
+    with name:js desc:js objective:word id:word step:float disabled condition disabledcondition:js returnfunc:word {
         execute <%disabledcondition.concat(disabledcondition != null ? " " : "")%>run {
             tellraw @s [{text:"<%name%>",color:"gray",hover_event:{action:"show_text",value:["<%desc%>","\n",{text:"This setting is locked.", color:"gray"},"\n",{text:"<%objective%>/<%id%>",color:"dark_gray",italic:true}]}},{text:": ",color:"white"},{score:{name:"<%id%>",objective:"<%objective%>"},color:"green"}," ",{text:"[-<%step%>]",color:"dark_red",hover_event:{action:"show_text",value:"This setting is locked"}}," ",{text:"[=]",color:"gold",hover_event:{action:"show_text",value:"This setting is disabled"}}," ",{text:"[+<%step%>]",color:"dark_green",hover_event:{action:"show_text",value:"This setting is disabled"}}]
         } else execute run {
-            tellraw @s [{text:"<%name%>",color:"aqua",hover_event:{action:"show_text",value:["<%desc%>","\n",{text:"<%objective%>/<%id%>",color:"dark_gray",italic:true}]}},{text:": ",color:"white"},{score:{name:"<%id%>",objective:"<%objective%>"},color:"green"}," ",{text:"[-<%step%>]",color:"red",hover_event:{action:"show_text",value:"Click to subtract <%step%>"},click_event:{action:"run_command",command:"function z_configmenu:run_and_return {cmd:\"scoreboard players remove <%id%> <%objective%> <%step%>\",return:\"function <%returnfunc%>\"}"}}," ",{text:"[=]",color:"yellow",hover_event:{action:"show_text",value:"Click to set a value manually (reopen the config manually after doing so)"},click_event:{action:"suggest_command",command:"/scoreboard players set <%id%> <%objective%> 0"}}," ",{text:"[+<%step%>]",color:"green",hover_event:{action:"show_text",value:"Click to add <%step%>"},click_event:{action:"run_command",command:"function z_configmenu:run_and_return {cmd:\"scoreboard players add <%id%> <%objective%> <%step%>\",return:\"function <%returnfunc%>\"}"}}]
+            tellraw @s [{text:"<%name%>",color:"aqua",hover_event:{action:"show_text",value:["<%desc%>","\n",{text:"<%objective%>/<%id%>",color:"dark_gray",italic:true}]}},{text:": ",color:"white"},{score:{name:"<%id%>",objective:"<%objective%>"},color:"green"}," ",{text:"[-<%step%>]",color:"red",hover_event:{action:"show_text",value:"Click to subtract <%step%>"},click_event:{action:"run_command",command:"/function z_configmenu:run_and_return {cmd:\"scoreboard players remove <%id%> <%objective%> <%step%>\",return:\"function <%returnfunc%>\"}"}}," ",{text:"[=]",color:"yellow",hover_event:{action:"show_text",value:"Click to set a value manually (reopen the config manually after doing so)"},click_event:{action:"suggest_command",command:"/scoreboard players set <%id%> <%objective%> 0"}}," ",{text:"[+<%step%>]",color:"green",hover_event:{action:"show_text",value:"Click to add <%step%>"},click_event:{action:"run_command",command:"/function z_configmenu:run_and_return {cmd:\"scoreboard players add <%id%> <%objective%> <%step%>\",return:\"function <%returnfunc%>\"}"}}]
         }
     }
-    with name:js desc:js objective:word id:word step:float disabled true disablereason:js {
-        tellraw @s [{text:"<%name%>",color:"gray",hover_event:{action:"show_text",value:["<%desc%>","\n",{text:"This setting is locked.\nReason: <%disablereason%>", color:"gray"},"\n",{text:"<%objective%>/<%id%>",color:"dark_gray",italic:true}]}},{text:": ",color:"white"},{score:{name:"<%id%>",objective:"<%objective%>"},color:"green"}," ",{text:"[-<%step%>]",color:"dark_red",hover_event:{action:"show_text",value:"This setting is locked"}}," ",{text:"[=]",color:"gold",hover_event:{action:"show_text",value:"This setting is disabled"}},{text:"[+<%step%>]",color:"dark_green",hover_event:{action:"show_text",value:"This setting is disabled"}}]
+    with name:js desc:js objective:word id:word step:float disabled condition disabledcondition:js returnfunc:word subconfig:word {
+        execute <%disabledcondition.concat(disabledcondition != null ? " " : "")%>run {
+            tellraw @s [{text:"<%name%>",color:"gray",hover_event:{action:"show_text",value:["<%desc%>","\n",{text:"This setting is locked.", color:"gray"},"\n",{text:"<%objective%>/<%id%>",color:"dark_gray",italic:true}]}},{text:": ",color:"white"},{score:{name:"<%id%>",objective:"<%objective%>"},color:"green"}," ",{text:"[-<%step%>]",color:"dark_red",hover_event:{action:"show_text",value:"This setting is locked"}}," ",{text:"[=]",color:"gold",hover_event:{action:"show_text",value:"This setting is disabled"}}," ",{text:"[+<%step%>]",color:"dark_green",hover_event:{action:"show_text",value:"This setting is disabled"}}]
+        } else execute run {
+            tellraw @s [{text:"<%name%>",color:"aqua",hover_event:{action:"show_text",value:["<%desc%>","\n",{text:"<%objective%>/<%id%>",color:"dark_gray",italic:true}]}},{text:": ",color:"white"},{score:{name:"<%id%>",objective:"<%objective%>"},color:"green"}," ",{text:"[-<%step%>]",color:"red",hover_event:{action:"show_text",value:"Click to subtract <%step%>"},click_event:{action:"run_command",command:"/function z_configmenu:run_and_return {cmd:\"scoreboard players remove <%id%> <%objective%> <%step%>\",return:\"function <%returnfunc%>\"}"}}," ",{text:"[=]",color:"yellow",hover_event:{action:"show_text",value:"Click to set a value manually (reopen the config manually after doing so)"},click_event:{action:"suggest_command",command:"/scoreboard players set <%id%> <%objective%> 0"}}," ",{text:"[+<%step%>]",color:"green",hover_event:{action:"show_text",value:"Click to add <%step%>"},click_event:{action:"run_command",command:"/function z_configmenu:run_and_return {cmd:\"scoreboard players add <%id%> <%objective%> <%step%>\",return:\"function <%returnfunc%>\"}"}}," ",{text:"[...]",color:"white",hover_event:{action:"show_text",value:"This setting has additional configuration options. Click to see and change them."},click_event:{action:"run_command",command:"/function <%subconfig%>"}}]
+        }
     }
     with name:js desc:js objective:word id:word step:float disabled true {
         tellraw @s [{text:"<%name%>",color:"gray",hover_event:{action:"show_text",value:["<%desc%>","\n",{text:"This setting is locked.", color:"gray"},"\n",{text:"<%objective%>/<%id%>",color:"dark_gray",italic:true}]}},{text:": ",color:"white"},{score:{name:"<%id%>",objective:"<%objective%>"},color:"green"}," ",{text:"[-<%step%>]",color:"dark_red",hover_event:{action:"show_text",value:"This setting is locked"}}," ",{text:"[=]",color:"gold",hover_event:{action:"show_text",value:"This setting is disabled"}}," ",{text:"[+<%step%>]",color:"dark_green",hover_event:{action:"show_text",value:"This setting is disabled"}}]
     }
-    with name:js desc:js objective:word id:word step:float disabled false returnfunc:raw {
-        tellraw @s [{text:"<%name%>",color:"aqua",hover_event:{action:"show_text",value:["<%desc%>","\n",{text:"<%objective%>/<%id%>",color:"dark_gray",italic:true}]}},{text:": ",color:"white"},{score:{name:"<%id%>",objective:"<%objective%>"},color:"green"}," ",{text:"[-<%step%>]",color:"red",hover_event:{action:"show_text",value:"Click to subtract <%step%>"},click_event:{action:"run_command",command:"function z_configmenu:run_and_return {cmd:\"scoreboard players remove <%id%> <%objective%> <%step%>\",return:\"function <%returnfunc%>\"}"}}," ",{text:"[=]",color:"yellow",hover_event:{action:"show_text",value:"Click to set a value manually (reopen the config manually after doing so)"},click_event:{action:"suggest_command",command:"/scoreboard players set <%id%> <%objective%> 0"}}," ",{text:"[+<%step%>]",color:"green",hover_event:{action:"show_text",value:"Click to add <%step%>"},click_event:{action:"run_command",command:"function z_configmenu:run_and_return {cmd:\"scoreboard players add <%id%> <%objective%> <%step%>\",return:\"function <%returnfunc%>\"}"}}]
+    with name:js desc:js objective:word id:word step:float disabled false returnfunc:word {
+        tellraw @s [{text:"<%name%>",color:"aqua",hover_event:{action:"show_text",value:["<%desc%>","\n",{text:"<%objective%>/<%id%>",color:"dark_gray",italic:true}]}},{text:": ",color:"white"},{score:{name:"<%id%>",objective:"<%objective%>"},color:"green"}," ",{text:"[-<%step%>]",color:"red",hover_event:{action:"show_text",value:"Click to subtract <%step%>"},click_event:{action:"run_command",command:"/function z_configmenu:run_and_return {cmd:\"scoreboard players remove <%id%> <%objective%> <%step%>\",return:\"function <%returnfunc%>\"}"}}," ",{text:"[=]",color:"yellow",hover_event:{action:"show_text",value:"Click to set a value manually (reopen the config manually after doing so)"},click_event:{action:"suggest_command",command:"/scoreboard players set <%id%> <%objective%> 0"}}," ",{text:"[+<%step%>]",color:"green",hover_event:{action:"show_text",value:"Click to add <%step%>"},click_event:{action:"run_command",command:"/function z_configmenu:run_and_return {cmd:\"scoreboard players add <%id%> <%objective%> <%step%>\",return:\"function <%returnfunc%>\"}"}}]
     }
-    with name:js desc:js objective:word id:word step:float returnfunc:raw {
-        tellraw @s [{text:"<%name%>",color:"aqua",hover_event:{action:"show_text",value:["<%desc%>","\n",{text:"<%objective%>/<%id%>",color:"dark_gray",italic:true}]}},{text:": ",color:"white"},{score:{name:"<%id%>",objective:"<%objective%>"},color:"green"}," ",{text:"[-<%step%>]",color:"red",hover_event:{action:"show_text",value:"Click to subtract <%step%>"},click_event:{action:"run_command",command:"function z_configmenu:run_and_return {cmd:\"scoreboard players remove <%id%> <%objective%> <%step%>\",return:\"function <%returnfunc%>\"}"}}," ",{text:"[=]",color:"yellow",hover_event:{action:"show_text",value:"Click to set a value manually (reopen the config manually after doing so)"},click_event:{action:"suggest_command",command:"/scoreboard players set <%id%> <%objective%> 0"}}," ",{text:"[+<%step%>]",color:"green",hover_event:{action:"show_text",value:"Click to add <%step%>"},click_event:{action:"run_command",command:"function z_configmenu:run_and_return {cmd:\"scoreboard players add <%id%> <%objective%> <%step%>\",return:\"function <%returnfunc%>\"}"}}]
+    with name:js desc:js objective:word id:word step:float disabled false returnfunc:word subconfig:word {
+        tellraw @s [{text:"<%name%>",color:"aqua",hover_event:{action:"show_text",value:["<%desc%>","\n",{text:"<%objective%>/<%id%>",color:"dark_gray",italic:true}]}},{text:": ",color:"white"},{score:{name:"<%id%>",objective:"<%objective%>"},color:"green"}," ",{text:"[-<%step%>]",color:"red",hover_event:{action:"show_text",value:"Click to subtract <%step%>"},click_event:{action:"run_command",command:"/function z_configmenu:run_and_return {cmd:\"scoreboard players remove <%id%> <%objective%> <%step%>\",return:\"function <%returnfunc%>\"}"}}," ",{text:"[=]",color:"yellow",hover_event:{action:"show_text",value:"Click to set a value manually (reopen the config manually after doing so)"},click_event:{action:"suggest_command",command:"/scoreboard players set <%id%> <%objective%> 0"}}," ",{text:"[+<%step%>]",color:"green",hover_event:{action:"show_text",value:"Click to add <%step%>"},click_event:{action:"run_command",command:"/function z_configmenu:run_and_return {cmd:\"scoreboard players add <%id%> <%objective%> <%step%>\",return:\"function <%returnfunc%>\"}"}}," ",{text:"[...]",color:"white",hover_event:{action:"show_text",value:"This setting has additional configuration options. Click to see and change them."},click_event:{action:"run_command",command:"/function <%subconfig%>"}}]
+    }
+    with name:js desc:js objective:word id:word step:float returnfunc:word {
+        tellraw @s [{text:"<%name%>",color:"aqua",hover_event:{action:"show_text",value:["<%desc%>","\n",{text:"<%objective%>/<%id%>",color:"dark_gray",italic:true}]}},{text:": ",color:"white"},{score:{name:"<%id%>",objective:"<%objective%>"},color:"green"}," ",{text:"[-<%step%>]",color:"red",hover_event:{action:"show_text",value:"Click to subtract <%step%>"},click_event:{action:"run_command",command:"/function z_configmenu:run_and_return {cmd:\"scoreboard players remove <%id%> <%objective%> <%step%>\",return:\"function <%returnfunc%>\"}"}}," ",{text:"[=]",color:"yellow",hover_event:{action:"show_text",value:"Click to set a value manually (reopen the config manually after doing so)"},click_event:{action:"suggest_command",command:"/scoreboard players set <%id%> <%objective%> 0"}}," ",{text:"[+<%step%>]",color:"green",hover_event:{action:"show_text",value:"Click to add <%step%>"},click_event:{action:"run_command",command:"/function z_configmenu:run_and_return {cmd:\"scoreboard players add <%id%> <%objective%> <%step%>\",return:\"function <%returnfunc%>\"}"}}]
+    }
+    with name:js desc:js objective:word id:word step:float returnfunc:word subconfig:word {
+        tellraw @s [{text:"<%name%>",color:"aqua",hover_event:{action:"show_text",value:["<%desc%>","\n",{text:"<%objective%>/<%id%>",color:"dark_gray",italic:true}]}},{text:": ",color:"white"},{score:{name:"<%id%>",objective:"<%objective%>"},color:"green"}," ",{text:"[-<%step%>]",color:"red",hover_event:{action:"show_text",value:"Click to subtract <%step%>"},click_event:{action:"run_command",command:"/function z_configmenu:run_and_return {cmd:\"scoreboard players remove <%id%> <%objective%> <%step%>\",return:\"function <%returnfunc%>\"}"}}," ",{text:"[=]",color:"yellow",hover_event:{action:"show_text",value:"Click to set a value manually (reopen the config manually after doing so)"},click_event:{action:"suggest_command",command:"/scoreboard players set <%id%> <%objective%> 0"}}," ",{text:"[+<%step%>]",color:"green",hover_event:{action:"show_text",value:"Click to add <%step%>"},click_event:{action:"run_command",command:"/function z_configmenu:run_and_return {cmd:\"scoreboard players add <%id%> <%objective%> <%step%>\",return:\"function <%returnfunc%>\"}"}}," ",{text:"[...]",color:"white",hover_event:{action:"show_text",value:"This setting has additional configuration options. Click to see and change them."},click_event:{action:"run_command",command:"/function <%subconfig%>"}}]
     }
 
 
 
 
-    with legacy name:js desc:js objective:word id:word step:float disabled condition disabledcondition:js disablereason:js returnfunc:raw {
-        execute <%disabledcondition.concat(disabledcondition != null ? " " : "")%>run {
-            tellraw @s [{"text":"<%name%>","color":"gray","hoverEvent":{"action":"show_text","value":["<%desc%>","\n",{"text":"This setting is locked.\nReason: <%disablereason%>", "color":"gray"},"\n",{"text":"<%objective%>/<%id%>","color":"dark_gray","italic":true}]}},{"text":": ","color":"white"},{"score":{"name":"<%id%>","objective":"<%objective%>"},"color":"green"}," ",{"text":"[-<%step%>]","color":"dark_red","hoverEvent":{"action":"show_text","value":"This setting is locked"}}," ",{"text":"[=]","color":"gold","hoverEvent":{"action":"show_text","value":"This setting is disabled"}}," ",{"text":"[+<%step%>]","color":"dark_green","hoverEvent":{"action":"show_text","value":"This setting is disabled"}}]
-        } else execute run {
-            tellraw @s [{"text":"<%name%>","color":"aqua","hoverEvent":{"action":"show_text","value":["<%desc%>","\n",{"text":"<%objective%>/<%id%>","color":"dark_gray","italic":true}]}},{"text":": ","color":"white"},{"score":{"name":"<%id%>","objective":"<%objective%>"},"color":"green"}," ",{"text":"[-<%step%>]","color":"red","hoverEvent":{"action":"show_text","value":"Click to subtract <%step%>"},"clickEvent":{"action":"run_command","value":"/function z_configmenu:run_and_return {cmd:\"scoreboard players remove <%id%> <%objective%> <%step%>\",return:\"function <%returnfunc%>\"}"}}," ",{"text":"[=]","color":"yellow","hoverEvent":{"action":"show_text","value":"Click to set a value manually (reopen the config manually after doing so)"},"clickEvent":{"action":"suggest_command","value":"/scoreboard players set <%id%> <%objective%> 0"}}," ",{"text":"[+<%step%>]","color":"green","hoverEvent":{"action":"show_text","value":"Click to add <%step%>"},"clickEvent":{"action":"run_command","value":"/function z_configmenu:run_and_return {cmd:\"scoreboard players add <%id%> <%objective%> <%step%>\",return:\"function <%returnfunc%>\"}"}}]
-        }
-    }
-    with legacy name:js desc:js objective:word id:word step:float disabled condition disabledcondition:js returnfunc:raw {
+    with legacy name:js desc:js objective:word id:word step:float disabled condition disabledcondition:js returnfunc:word {
         execute <%disabledcondition.concat(disabledcondition != null ? " " : "")%>run {
             tellraw @s [{"text":"<%name%>","color":"gray","hoverEvent":{"action":"show_text","value":["<%desc%>","\n",{"text":"This setting is locked.", "color":"gray"},"\n",{"text":"<%objective%>/<%id%>","color":"dark_gray","italic":true}]}},{"text":": ","color":"white"},{"score":{"name":"<%id%>","objective":"<%objective%>"},"color":"green"}," ",{"text":"[-<%step%>]","color":"dark_red","hoverEvent":{"action":"show_text","value":"This setting is locked"}}," ",{"text":"[=]","color":"gold","hoverEvent":{"action":"show_text","value":"This setting is disabled"}}," ",{"text":"[+<%step%>]","color":"dark_green","hoverEvent":{"action":"show_text","value":"This setting is disabled"}}]
         } else execute run {
             tellraw @s [{"text":"<%name%>","color":"aqua","hoverEvent":{"action":"show_text","value":["<%desc%>","\n",{"text":"<%objective%>/<%id%>","color":"dark_gray","italic":true}]}},{"text":": ","color":"white"},{"score":{"name":"<%id%>","objective":"<%objective%>"},"color":"green"}," ",{"text":"[-<%step%>]","color":"red","hoverEvent":{"action":"show_text","value":"Click to subtract <%step%>"},"clickEvent":{"action":"run_command","value":"/function z_configmenu:run_and_return {cmd:\"scoreboard players remove <%id%> <%objective%> <%step%>\",return:\"function <%returnfunc%>\"}"}}," ",{"text":"[=]","color":"yellow","hoverEvent":{"action":"show_text","value":"Click to set a value manually (reopen the config manually after doing so)"},"clickEvent":{"action":"suggest_command","value":"/scoreboard players set <%id%> <%objective%> 0"}}," ",{"text":"[+<%step%>]","color":"green","hoverEvent":{"action":"show_text","value":"Click to add <%step%>"},"clickEvent":{"action":"run_command","value":"/function z_configmenu:run_and_return {cmd:\"scoreboard players add <%id%> <%objective%> <%step%>\",return:\"function <%returnfunc%>\"}"}}]
         }
     }
-    with legacy name:js desc:js objective:word id:word step:float disabled true disablereason:js {
-        tellraw @s [{"text":"<%name%>","color":"gray","hoverEvent":{"action":"show_text","value":["<%desc%>","\n",{"text":"This setting is locked.\nReason: <%disablereason%>", "color":"gray"},"\n",{"text":"<%objective%>/<%id%>","color":"dark_gray","italic":true}]}},{"text":": ","color":"white"},{"score":{"name":"<%id%>","objective":"<%objective%>"},"color":"green"}," ",{"text":"[-<%step%>]","color":"dark_red","hoverEvent":{"action":"show_text","value":"This setting is locked"}}," ",{"text":"[=]","color":"gold","hoverEvent":{"action":"show_text","value":"This setting is disabled"}},{"text":"[+<%step%>]","color":"dark_green","hoverEvent":{"action":"show_text","value":"This setting is disabled"}}]
+    with legacy name:js desc:js objective:word id:word step:float disabled condition disabledcondition:js returnfunc:word subconfig:word {
+        execute <%disabledcondition.concat(disabledcondition != null ? " " : "")%>run {
+            tellraw @s [{"text":"<%name%>","color":"gray","hoverEvent":{"action":"show_text","value":["<%desc%>","\n",{"text":"This setting is locked.", "color":"gray"},"\n",{"text":"<%objective%>/<%id%>","color":"dark_gray","italic":true}]}},{"text":": ","color":"white"},{"score":{"name":"<%id%>","objective":"<%objective%>"},"color":"green"}," ",{"text":"[-<%step%>]","color":"dark_red","hoverEvent":{"action":"show_text","value":"This setting is locked"}}," ",{"text":"[=]","color":"gold","hoverEvent":{"action":"show_text","value":"This setting is disabled"}}," ",{"text":"[+<%step%>]","color":"dark_green","hoverEvent":{"action":"show_text","value":"This setting is disabled"}}]
+        } else execute run {
+            tellraw @s [{"text":"<%name%>","color":"aqua","hoverEvent":{"action":"show_text","value":["<%desc%>","\n",{"text":"<%objective%>/<%id%>","color":"dark_gray","italic":true}]}},{"text":": ","color":"white"},{"score":{"name":"<%id%>","objective":"<%objective%>"},"color":"green"}," ",{"text":"[-<%step%>]","color":"red","hoverEvent":{"action":"show_text","value":"Click to subtract <%step%>"},"clickEvent":{"action":"run_command","value":"/function z_configmenu:run_and_return {cmd:\"scoreboard players remove <%id%> <%objective%> <%step%>\",return:\"function <%returnfunc%>\"}"}}," ",{"text":"[=]","color":"yellow","hoverEvent":{"action":"show_text","value":"Click to set a value manually (reopen the config manually after doing so)"},"clickEvent":{"action":"suggest_command","value":"/scoreboard players set <%id%> <%objective%> 0"}}," ",{"text":"[+<%step%>]","color":"green","hoverEvent":{"action":"show_text","value":"Click to add <%step%>"},"clickEvent":{"action":"run_command","value":"/function z_configmenu:run_and_return {cmd:\"scoreboard players add <%id%> <%objective%> <%step%>\",return:\"function <%returnfunc%>\"}"}}," ",{"text":"[...]","color":"white","hoverEvent":{"action":"show_text","value":"This setting has additional configuration options. Click to see and change them."},"clickEvent":{"action":"run_command","value":"/function <%subconfig%>"}}]
+        }
     }
+
     with legacy name:js desc:js objective:word id:word step:float disabled true {
         tellraw @s [{"text":"<%name%>","color":"gray","hoverEvent":{"action":"show_text","value":["<%desc%>","\n",{"text":"This setting is locked.", "color":"gray"},"\n",{"text":"<%objective%>/<%id%>","color":"dark_gray","italic":true}]}},{"text":": ","color":"white"},{"score":{"name":"<%id%>","objective":"<%objective%>"},"color":"green"}," ",{"text":"[-<%step%>]","color":"dark_red","hoverEvent":{"action":"show_text","value":"This setting is locked"}}," ",{"text":"[=]","color":"gold","hoverEvent":{"action":"show_text","value":"This setting is disabled"}},{"text":"[+<%step%>]","color":"dark_green","hoverEvent":{"action":"show_text","value":"This setting is disabled"}}]
     }
-    with legacy name:js desc:js objective:word id:word step:float disabled false returnfunc:raw {
+    with legacy name:js desc:js objective:word id:word step:float disabled false returnfunc:word {
         tellraw @s [{"text":"<%name%>","color":"aqua","hoverEvent":{"action":"show_text","value":["<%desc%>","\n",{"text":"<%objective%>/<%id%>","color":"dark_gray","italic":true}]}},{"text":": ","color":"white"},{"score":{"name":"<%id%>","objective":"<%objective%>"},"color":"green"}," ",{"text":"[-<%step%>]","color":"red","hoverEvent":{"action":"show_text","value":"Click to subtract <%step%>"},"clickEvent":{"action":"run_command","value":"/function z_configmenu:run_and_return {cmd:\"scoreboard players remove <%id%> <%objective%> <%step%>\",return:\"function <%returnfunc%>\"}"}}," ",{"text":"[=]","color":"yellow","hoverEvent":{"action":"show_text","value":"Click to set a value manually (reopen the config manually after doing so)"},"clickEvent":{"action":"suggest_command","value":"/scoreboard players set <%id%> <%objective%> 0"}}," ",{"text":"[+<%step%>]","color":"green","hoverEvent":{"action":"show_text","value":"Click to add <%step%>"},"clickEvent":{"action":"run_command","value":"/function z_configmenu:run_and_return {cmd:\"scoreboard players add <%id%> <%objective%> <%step%>\",return:\"function <%returnfunc%>\"}"}}]
     }
-    with legacy name:js desc:js objective:word id:word step:float returnfunc:raw {
+    with legacy name:js desc:js objective:word id:word step:float disabled false returnfunc:word subconfig:word {
+        tellraw @s [{"text":"<%name%>","color":"aqua","hoverEvent":{"action":"show_text","value":["<%desc%>","\n",{"text":"<%objective%>/<%id%>","color":"dark_gray","italic":true}]}},{"text":": ","color":"white"},{"score":{"name":"<%id%>","objective":"<%objective%>"},"color":"green"}," ",{"text":"[-<%step%>]","color":"red","hoverEvent":{"action":"show_text","value":"Click to subtract <%step%>"},"clickEvent":{"action":"run_command","value":"/function z_configmenu:run_and_return {cmd:\"scoreboard players remove <%id%> <%objective%> <%step%>\",return:\"function <%returnfunc%>\"}"}}," ",{"text":"[=]","color":"yellow","hoverEvent":{"action":"show_text","value":"Click to set a value manually (reopen the config manually after doing so)"},"clickEvent":{"action":"suggest_command","value":"/scoreboard players set <%id%> <%objective%> 0"}}," ",{"text":"[+<%step%>]","color":"green","hoverEvent":{"action":"show_text","value":"Click to add <%step%>"},"clickEvent":{"action":"run_command","value":"/function z_configmenu:run_and_return {cmd:\"scoreboard players add <%id%> <%objective%> <%step%>\",return:\"function <%returnfunc%>\"}"}}," ",{"text":"[...]","color":"white","hoverEvent":{"action":"show_text","value":"This setting has additional configuration options. Click to see and change them."},"clickEvent":{"action":"run_command","value":"/function <%subconfig%>"}}]
+    }
+    with legacy name:js desc:js objective:word id:word step:float returnfunc:word subconfig:word {
+        tellraw @s [{"text":"<%name%>","color":"aqua","hoverEvent":{"action":"show_text","value":["<%desc%>","\n",{"text":"<%objective%>/<%id%>","color":"dark_gray","italic":true}]}},{"text":": ","color":"white"},{"score":{"name":"<%id%>","objective":"<%objective%>"},"color":"green"}," ",{"text":"[-<%step%>]","color":"red","hoverEvent":{"action":"show_text","value":"Click to subtract <%step%>"},"clickEvent":{"action":"run_command","value":"/function z_configmenu:run_and_return {cmd:\"scoreboard players remove <%id%> <%objective%> <%step%>\",return:\"function <%returnfunc%>\"}"}}," ",{"text":"[=]","color":"yellow","hoverEvent":{"action":"show_text","value":"Click to set a value manually (reopen the config manually after doing so)"},"clickEvent":{"action":"suggest_command","value":"/scoreboard players set <%id%> <%objective%> 0"}}," ",{"text":"[+<%step%>]","color":"green","hoverEvent":{"action":"show_text","value":"Click to add <%step%>"},"clickEvent":{"action":"run_command","value":"/function z_configmenu:run_and_return {cmd:\"scoreboard players add <%id%> <%objective%> <%step%>\",return:\"function <%returnfunc%>\"}"}}," ",{"text":"[...]","color":"white","hoverEvent":{"action":"show_text","value":"This setting has additional configuration options. Click to see and change them."},"clickEvent":{"action":"run_command","value":"/function <%subconfig%>"}}]
+    }
+
+    with legacy name:js desc:js objective:word id:word step:float returnfunc:word {
         tellraw @s [{"text":"<%name%>","color":"aqua","hoverEvent":{"action":"show_text","value":["<%desc%>","\n",{"text":"<%objective%>/<%id%>","color":"dark_gray","italic":true}]}},{"text":": ","color":"white"},{"score":{"name":"<%id%>","objective":"<%objective%>"},"color":"green"}," ",{"text":"[-<%step%>]","color":"red","hoverEvent":{"action":"show_text","value":"Click to subtract <%step%>"},"clickEvent":{"action":"run_command","value":"/function z_configmenu:run_and_return {cmd:\"scoreboard players remove <%id%> <%objective%> <%step%>\",return:\"function <%returnfunc%>\"}"}}," ",{"text":"[=]","color":"yellow","hoverEvent":{"action":"show_text","value":"Click to set a value manually (reopen the config manually after doing so)"},"clickEvent":{"action":"suggest_command","value":"/scoreboard players set <%id%> <%objective%> 0"}}," ",{"text":"[+<%step%>]","color":"green","hoverEvent":{"action":"show_text","value":"Click to add <%step%>"},"clickEvent":{"action":"run_command","value":"/function z_configmenu:run_and_return {cmd:\"scoreboard players add <%id%> <%objective%> <%step%>\",return:\"function <%returnfunc%>\"}"}}]
     }
 
@@ -205,6 +258,25 @@ template numeric_input {
 
 }
 
+# An input that only has [...] for a button. Intended for having separate categories of settings in their own config page for better organization and a more compact main config screen.
+# Looks like this: Category: [...]
+
+template submenu {
+    with name:js desc:js subconfig:word {
+        tellraw @s [{text:"<%name%>",color:"aqua",hover_event:{action:"show_text",value:["<%desc%>","\n",{text:"Submenu",color:"dark_gray",italic:true}]}},{text:": ",color:"white"},{text:"[...]",color:"white",hover_event:{action:"show_text",value:"This setting requires a separate menu. Click to open it."},click_event:{action:"run_command",command:"/function <%subconfig%>"}}]
+    }
+
+    with legacy name:js desc:js subconfig:word {
+        tellraw @s [{"text":"<%name%>","color":"aqua","hoverEvent":{"action":"show_text","value":["<%desc%>","\n",{"text":"Submenu","color":"dark_gray","italic":true}]}},{"text":": ","color":"white"},{"text":"[...]","color":"white","hoverEvent":{"action":"show_text","value":"This setting requires a separate menu. Click to open it."},"clickEvent":{"action":"run_command","value":"/function <%subconfig%>"}}]
+    }
+}
+
+# A simple value display. 
+# Unlike the rest of the inputs in this menu, this isn't limited to just a scoreboard value, it also allows you to use a NBT data storage value or a constant value.
+# Looks like: Depends
+# Score: Name: Value
+# Data storage: Name: NBT Value
+# Constant: Name: (Whatever text or value you want here)
 
 template value_display {
     with name:js desc:js constant value:raw {
@@ -230,6 +302,14 @@ template value_display {
 
 }
 
+# A simple page bar.
+# Useful for multiple pages in a config.
+# The look of it depends on the amount of pages specified: [1][2][3][4]...
+# Usage: pagebar (page amount) (prefix)
+# where page amount is the amount of pages, and prefix is the path of the pages.
+# Each button generated by this template will run the function (prefix)/page(button number)
+# Example: setting the prefix to 'pack:config' will make buttons 1, 2, 3, ... run functions 'pack:config/page1', 'pack:config/page2', 'pack:config/page3', ...
+
 template pagebar {
     with pages:int functionprefix:js {
         data remove storage z_configmenu:temp TextComponent
@@ -246,3 +326,232 @@ template pagebar {
         tellraw @s {"storage":"z_configmenu:temp","nbt":"TextComponent","interpret":true}
     }
 }
+
+# Prints 1 or more empty lines.
+# If used without arguments, prints a single empty line.
+# If a number is provided, it will print that many lines.
+
+template emptyline {
+    with {
+        tellraw @s ""
+    }
+    with amount:int {
+        REPEAT (1, amount) as variable {
+            tellraw @s ""
+        }
+    }
+}
+
+# A single button with a customizable name, color, and click command.
+
+template single_button {
+    with text:js color:word cmd:js {
+        tellraw @s [{text:"[<%text%>]",color:<%color%>,click_event:{action:run_command,command:"<%cmd%>"}}]
+    }
+    with legacy text:js color:word cmd:js {
+        tellraw @s [{"text":"[<%text%>]","color":"<%color%>","clickEvent":{"action":"run_command","value":"<%cmd%>"}}]
+    }
+
+}
+
+# Exact same as /tellraw @s
+
+template textline {
+    with text:raw {
+        tellraw @s <%text%>
+    }
+}
+
+# Asks the user if they want to confirm an action.
+# If the 'no' parameter is omitted, it will only show a confirm button. If the 'no' parameter is included, it also shows a cancel button.
+# Clicking [Confirm] runs the command specified in the js input 'yes', and clicking [Cancel] runs the command specified in the js input 'no'.
+# An optional note can be provided.
+# Has a function macro version, for use cases where the template cannot be used normally and needs to use function macroes.
+
+# The normal legacy parameter doesn't apply here, instead, you need to provide a boolean for the legacy input to use the legacy text components.
+# This is because when this was added it was intended to only be used in my OldCombat Datapack, where this template used the js variable $1_21_4compile that oldcombat defines to determine whether it should use the legacy text components.
+# I, however, just realized while adding these comments that that was a stupid decision and decided to temporarily change it to this.
+# It will soon follow the normal legacy parameter when I get time to do that.
+
+template confirmnoreturn {
+    with yes:js legacy:word {
+        tellraw @s ["<%context.namespace%> is asking if you're sure about this action."]
+        tellraw @s ""
+        IF (legacy) {
+            tellraw @s ["<%spacing%>",{"text":"[Confirm]","color":"green","clickEvent":{"action":"run_command","value":'<%yes%>'}}]
+        } ELSE {
+            tellraw @s ["<%spacing%>",{text:"[Confirm]",color:green,click_event:{action:run_command,command:'<%yes%>'}}]
+        }
+
+    }
+    with yes:js no:js legacy:word {
+        tellraw @s ["<%context.namespace%> is asking if you're sure about this action."]
+        tellraw @s ""
+        IF (legacy) {
+            tellraw @s ["<%spacing%>",{"text":"[Confirm]","color":"green","clickEvent":{"action":"run_command","value":'<%yes%>'}}," ",{"text":"[Cancel]","color":"red","clickEvent":{"action":"run_command","value":'<%no%>'}}]
+        } ELSE {
+            tellraw @s ["<%spacing%>",{text:"[Confirm]",color:green,click_event:{action:run_command,command:'<%yes%>'}}," ",{text:"[Cancel]",color:red,click_event:{action:run_command,command:'<%no%>'}}]
+        }
+
+    }
+
+    with macro legacy:word {
+        <%%
+            spacing = "\\t".repeat(0);
+        %%>
+        $tellraw @s ["$(namespace) is asking if you're sure about this action."]
+        tellraw @s ""
+        IF (legacy) {
+            $tellraw @s ["<%spacing%>",{"text":"[Confirm]","color":"green","clickEvent":{"action":"run_command","value":'$(yes)'}}," ",{"text":"[Cancel]","color":"red","clickEvent":{"action":"run_command","value":'$(no)'}}]
+        } ELSE {
+            $tellraw @s ["<%spacing%>",{text:"[Confirm]",color:green,click_event:{action:run_command,command:'$(yes)'}}," ",{text:"[Cancel]",color:red,click_event:{action:run_command,command:'$(no)'}}]
+        }
+
+    }
+    with yes:js legacy:word note:raw {
+        
+        tellraw @s ["<%context.namespace%> is asking if you're sure about this action."]
+        tellraw @s "<%note%>"
+        IF (legacy) {
+            tellraw @s ["<%spacing%>",{"text":"[Confirm]","color":"green","clickEvent":{"action":"run_command","value":'<%yes%>'}}]
+        } ELSE {
+            tellraw @s ["<%spacing%>",{text:"[Confirm]",color:green,click_event:{action:run_command,command:'<%yes%>'}}]
+        }
+    }
+    with yes:js no:js legacy:word note:raw {
+        tellraw @s ["<%context.namespace%> is asking if you're sure about this action."]
+        tellraw @s "<%note%>"
+        IF (legacy) {
+            tellraw @s ["<%spacing%>",{"text":"[Confirm]","color":"green","clickEvent":{"action":"run_command","value":'<%yes%>'}}," ",{"text":"[Cancel]","color":"red","clickEvent":{"action":"run_command","value":'<%no%>'}}]
+        } ELSE {
+            tellraw @s ["<%spacing%>",{text:"[Confirm]",color:green,click_event:{action:run_command,command:'<%yes%>'}}," ",{text:"[Cancel]",color:red,click_event:{action:run_command,command:'<%no%>'}}]
+        }
+
+    }
+    with macro legacy:word note {
+        <%%
+            spacing = "\\t".repeat(0);
+        %%>
+        $tellraw @s ["$(namespace) is asking if you're sure about this action."]
+        $tellraw @s "$(note)"
+        IF (legacy) {
+            $tellraw @s ["<%spacing%>",{"text":"[Confirm]","color":"green","clickEvent":{"action":"run_command","value":'$(yes)'}}," ",{"text":"[Cancel]","color":"red","clickEvent":{"action":"run_command","value":'$(no)'}}]
+        } ELSE {
+            $tellraw @s ["<%spacing%>",{text:"[Confirm]",color:green,click_event:{action:run_command,command:'$(yes)'}}," ",{text:"[Cancel]",color:red,click_event:{action:run_command,command:'$(no)'}}]
+        }
+
+    }
+
+}
+
+# Same as the above, but it covers the whole chat window, and after a button is pressed, not only does it run the command but it also returns to the function that invoked this template afterward.
+# Uses the different legacy parameter for the same reasons as the above template.
+
+template confirm {
+    with yes:js legacy:word {
+        REPEAT (1,9) as variable {
+            tellraw @s ""
+        }
+        tellraw @s ["<%context.namespace%> is asking if you're sure about this action."]
+        tellraw @s ""
+        IF (legacy) {
+            tellraw @s ["<%spacing%>",{"text":"[Confirm]","color":"green","clickEvent":{"action":"run_command","value":'function z_configmenu:run_and_return {cmd:\'<%yes%>\',return:\'function <%context.functions[0]%>\'}'}}," ",{"text":"[Cancel]","color":"red","clickEvent":{"action":"run_command","value":'function <%context.functions[0]%>'}}]
+        } ELSE {
+            tellraw @s ["<%spacing%>",{text:"[Confirm]",color:green,click_event:{action:run_command,command:'function z_configmenu:run_and_return {cmd:\'<%yes%>\',return:\'function <%context.functions[0]%>\'}'}}," ",{text:"[Cancel]",color:red,click_event:{action:run_command,command:'function <%context.functions[0]%>'}}]
+        }
+        REPEAT (1,8) as variable {
+            tellraw @s ""
+        }
+
+    }
+    with yes:js no:js legacy:word {
+        REPEAT (1,9) as variable {
+            tellraw @s ""
+        }
+        tellraw @s ["<%context.namespace%> is asking if you're sure about this action."]
+        tellraw @s ""
+        IF (legacy) {
+            tellraw @s ["<%spacing%>",{"text":"[Confirm]","color":"green","clickEvent":{"action":"run_command","value":'function z_configmenu:run_and_return {cmd:\'<%yes%>\',return:\'function <%context.functions[0]%>\'}'}}," ",{"text":"[Cancel]","color":"red","clickEvent":{"action":"run_command","value":'function z_configmenu:run_and_return {cmd:\'<%no%>\',return:\'function <%context.functions[0]%>\'}'}}]
+        } ELSE {
+            tellraw @s ["<%spacing%>",{text:"[Confirm]",color:green,click_event:{action:run_command,command:'function z_configmenu:run_and_return {cmd:\'<%yes%>\',return:\'function <%context.functions[0]%>\'}'}}," ",{text:"[Cancel]",color:red,click_event:{action:run_command,command:'function z_configmenu:run_and_return {cmd:\'<%no%>\',return:\'function <%context.functions[0]%>\'}'}}]
+        }
+        REPEAT (1,8) as variable {
+            tellraw @s ""
+        }
+
+    }
+
+    with macro legacy:word {
+        <%%
+            spacing = "\\t".repeat(0);
+        %%>
+        REPEAT (1,9) as variable {
+            tellraw @s ""
+        }
+        $tellraw @s ["$(namespace) is asking if you're sure about this action."]
+        tellraw @s ""
+        IF (legacy) {
+            $tellraw @s ["<%spacing%>",{"text":"[Confirm]","color":"green","clickEvent":{"action":"run_command","value":'function z_configmenu:run_and_return {cmd:\'$(yes)\',return:\'function $(return)\'}'}}," ",{"text":"[Cancel]","color":"red","clickEvent":{"action":"run_command","value":'function z_configmenu:run_and_return {cmd:\'$(no)\',return:\'function $(return)\'}'}}]
+        } ELSE {
+            $tellraw @s ["<%spacing%>",{text:"[Confirm]",color:green,click_event:{action:run_command,command:'function z_configmenu:run_and_return {cmd:\'$(yes)\',return:\'function $(return)\'}'}}," ",{text:"[Cancel]",color:red,click_event:{action:run_command,command:'function z_configmenu:run_and_return {cmd:\'$(no)\',return:\'$(return)\'}'}}]
+        }
+        REPEAT (1,8) as variable {
+            tellraw @s ""
+        }
+
+    }
+    with yes:js legacy:word note:raw {
+        
+        REPEAT (1,9) as variable {
+            tellraw @s ""
+        }
+        tellraw @s ["<%context.namespace%> is asking if you're sure about this action."]
+        tellraw @s "<%note%>"
+        IF (legacy) {
+            tellraw @s ["<%spacing%>",{"text":"[Confirm]","color":"green","clickEvent":{"action":"run_command","value":'function z_configmenu:run_and_return {cmd:\'<%yes%>\',return:\'function <%context.functions[0]%>\'}'}}," ",{"text":"[Cancel]","color":"red","clickEvent":{"action":"run_command","value":'function <%context.functions[0]%>'}}]
+        } ELSE {
+            tellraw @s ["<%spacing%>",{text:"[Confirm]",color:green,click_event:{action:run_command,command:'function z_configmenu:run_and_return {cmd:\'<%yes%>\',return:\'function <%context.functions[0]%>\'}'}}," ",{text:"[Cancel]",color:red,click_event:{action:run_command,command:'function <%context.functions[0]%>'}}]
+        }
+        REPEAT (1,8) as variable {
+            tellraw @s ""
+        }
+
+    }
+    with yes:js no:js legacy:word note:raw {
+        REPEAT (1,9) as variable {
+            tellraw @s ""
+        }
+        tellraw @s ["<%context.namespace%> is asking if you're sure about this action."]
+        tellraw @s "<%note%>"
+        IF (legacy) {
+            tellraw @s ["<%spacing%>",{"text":"[Confirm]","color":"green","clickEvent":{"action":"run_command","value":'function z_configmenu:run_and_return {cmd:\'<%yes%>\',return:\'function <%context.functions[0]%>\'}'}}," ",{"text":"[Cancel]","color":"red","clickEvent":{"action":"run_command","value":'function z_configmenu:run_and_return {cmd:\'<%no%>\',return:\'function <%context.functions[0]%>\'}'}}]
+        } ELSE {
+            tellraw @s ["<%spacing%>",{text:"[Confirm]",color:green,click_event:{action:run_command,command:'function z_configmenu:run_and_return {cmd:\'<%yes%>\',return:\'function <%context.functions[0]%>\'}'}}," ",{text:"[Cancel]",color:red,click_event:{action:run_command,command:'function z_configmenu:run_and_return {cmd:\'<%no%>\',return:\'function <%context.functions[0]%>\'}'}}]
+        }
+        REPEAT (1,8) as variable {
+            tellraw @s ""
+        }
+
+    }
+    with macro legacy:word note {
+        <%%
+            spacing = "\\t".repeat(0);
+        %%>
+        REPEAT (1,9) as variable {
+            tellraw @s ""
+        }
+        $tellraw @s ["$(namespace) is asking if you're sure about this action."]
+        $tellraw @s "$(note)"
+        IF (legacy) {
+            $tellraw @s ["<%spacing%>",{"text":"[Confirm]","color":"green","clickEvent":{"action":"run_command","value":'function z_configmenu:run_and_return {cmd:\'$(yes)\',return:\'function $(return)\'}'}}," ",{"text":"[Cancel]","color":"red","clickEvent":{"action":"run_command","value":'function z_configmenu:run_and_return {cmd:\'$(no)\',return:\'function $(return)\'}'}}]
+        } ELSE {
+            $tellraw @s ["<%spacing%>",{text:"[Confirm]",color:green,click_event:{action:run_command,command:'function z_configmenu:run_and_return {cmd:\'$(yes)\',return:\'function $(return)\'}'}}," ",{text:"[Cancel]",color:red,click_event:{action:run_command,command:'function z_configmenu:run_and_return {cmd:\'$(no)\',return:\'$(return)\'}'}}]
+        }
+        REPEAT (1,8) as variable {
+            tellraw @s ""
+        }
+
+    }
+
+}
+
