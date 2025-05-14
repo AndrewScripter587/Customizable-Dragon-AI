@@ -1,0 +1,3 @@
+$execute if score MinecraftVersion VersionInfo matches 14 run function dragonai:configmenu/booleaninputnew {showtextname:"text",name:"$(name)",id:"$(id)",returnto:"$(returnto)",hovertext:"$(hovertext)",extrajson:"$(extrajson)"}
+$execute if score MinecraftVersion VersionInfo matches 15.. run function dragonai:configmenu/booleaninputnew {showtextname:"value",name:"$(name)",id:"$(id)",returnto:"$(returnto)",hovertext:"$(hovertext)",extrajson:"$(extrajson)"}
+$execute if score MinecraftVersion VersionInfo matches ..13 run function dragonai:configmenu/booleaninputold {name:"$(name)",id:"$(id)",returnto:"$(returnto)",hovertext:"$(hovertext)",extrajson:"$(extrajson)"}
