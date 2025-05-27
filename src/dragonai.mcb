@@ -18,7 +18,7 @@ import ./Logger.mcbt
         Phase_NOAI = 10
         Phase_NORMAL = 0
         //Compile for specific version
-        $compilever = "1.21.5"
+        $compilever = "1.21.4"
         $verbose = false
 %%>
 
