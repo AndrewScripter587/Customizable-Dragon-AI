@@ -313,7 +313,7 @@ function ai {
     execute at @s if entity @e[limit=1,sort=nearest,distance=..10,tag=DragonChargeTarget] if score @s DragonChargeTimer matches 1 run {
         verbose debug ["Dragon ",{selector:"@s"}," ended charge with reason: Reached Target"]
     }
-    execute at @s if entity @e[limit=1,sort=nearest,distance=..10,tag=DragonChargeTarget] run scoreboard players remove @s DragonChargeTimer 1
+    execute at @s if entity @e[limit=1,sort=nearest,distance=..10,tag=DragonChargeTarget] if score @s DragonChargeTimer matches 1.. run scoreboard players remove @s DragonChargeTimer 1
     execute unless score UseEnhancedAI DragonAISettings matches 1 at @s unless entity @e[type=marker,tag=DragonChargeTarget] if score @s DragonChargeTimer matches 1.. run {
         verbose debug ["Dragon ",{selector:"@s"}," ended charge with reason: Invalid Target"]
     }
@@ -343,11 +343,6 @@ function bedrockareaeffectcloudinit {
 }
 
 tag entity_type dragon_charge_at {
-    #minecraft:undead
-    minecraft:iron_golem
-    minecraft:villager
-    minecraft:wandering_trader
-    minecraft:creeper
 }
 
 function enable {

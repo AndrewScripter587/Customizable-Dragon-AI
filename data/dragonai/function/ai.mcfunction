@@ -82,7 +82,7 @@ execute if data entity @s {DragonPhase:3} at @s run tag @e[type=marker,limit=1,t
 execute if data entity @s {DragonPhase:9} at @s run tag @e[type=marker,limit=1,tag=center,sort=nearest,distance=0..] add DragonTarget
 # Stop charging if too far away from target position or is done charging
 execute at @s if entity @e[limit=1,sort=nearest,distance=..10,tag=DragonChargeTarget] if score @s DragonChargeTimer matches 1 run function dragonai:zzz/8
-execute at @s if entity @e[limit=1,sort=nearest,distance=..10,tag=DragonChargeTarget] run scoreboard players remove @s DragonChargeTimer 1
+execute at @s if entity @e[limit=1,sort=nearest,distance=..10,tag=DragonChargeTarget] if score @s DragonChargeTimer matches 1.. run scoreboard players remove @s DragonChargeTimer 1
 execute unless score UseEnhancedAI DragonAISettings matches 1 at @s unless entity @e[type=marker,tag=DragonChargeTarget] if score @s DragonChargeTimer matches 1.. run function dragonai:zzz/9
 execute unless score UseEnhancedAI DragonAISettings matches 1 at @s unless entity @e[limit=1,sort=nearest,distance=..125,tag=DragonChargeTarget] if entity @e[type=marker,tag=DragonChargeTarget] if score @s DragonChargeTimer matches 1.. run function dragonai:zzz/10
 execute unless score UseEnhancedAI DragonAISettings matches 1 at @s unless entity @e[limit=1,sort=nearest,distance=..125,tag=DragonChargeTarget] run scoreboard players set @s DragonChargeTimer 0
