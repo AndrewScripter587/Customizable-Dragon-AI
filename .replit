@@ -1,0 +1,8 @@
+modules = ["bash", "nodejs-20"]
+run = "mcb build"
+
+[nix]
+channel = "stable-24_05"
+
+[deployment]
+run = ["sh", "-c", "mcb build"]
