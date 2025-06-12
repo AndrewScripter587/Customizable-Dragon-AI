@@ -1,8 +1,17 @@
-modules = ["bash", "nodejs-20"]
-run = "mcb build"
-
 [nix]
-channel = "stable-24_05"
+packages = ["zip"]
 
-[deployment]
-run = ["sh", "-c", "mcb build"]
+[workflows]
+
+[[workflows.workflow]]
+name = "Build and zip"
+mode = "sequential"
+author = 39646367
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "mcb build"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "bash makezip.sh"

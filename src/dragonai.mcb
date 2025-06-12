@@ -247,9 +247,9 @@ function ai {
     execute if score FrequentPerching DragonAISettings matches 1 if entity @s[nbt=!{DragonPhase:4},nbt=!{DragonPhase:5},nbt=!{DragonPhase:6},nbt=!{DragonPhase:7},nbt=!{DragonPhase:3},nbt=!{DragonPhase:9}] if score @s PerchTimer matches 1.. unless score @s DragonChargeTimer matches 1.. run scoreboard players remove @s PerchTimer 1
     execute if score FrequentPerching DragonAISettings matches 1 if entity @s[nbt=!{DragonPhase:4},nbt=!{DragonPhase:5},nbt=!{DragonPhase:6},nbt=!{DragonPhase:7},nbt=!{DragonPhase:3},nbt=!{DragonPhase:9}] if score @s RNG matches 980..1000 unless score @s DragonChargeTimer matches 1.. if score @s PerchTimer matches ..0 run phase <%Phase_APPROACHING%>
     execute if score FrequentPerching DragonAISettings matches 1 if entity @s[nbt=!{DragonPhase:4},nbt=!{DragonPhase:5},nbt=!{DragonPhase:6},nbt=!{DragonPhase:7},nbt=!{DragonPhase:3},nbt=!{DragonPhase:9}] if score @s RNG matches 980..1000 unless score @s DragonChargeTimer matches 1.. if score @s PerchTimer matches ..0 run {
-        verbose debug ["Dragon ",{selector:"@s"}," set to perch forcefully."]
+        verbose debug ["Dragon ",{"selector":"@s"}," set to perch forcefully."]
     }
-    execute if score FrequentPerching DragonAISettings matches 1 unless entity @s[nbt=!{DragonPhase:4},nbt=!{DragonPhase:5},nbt=!{DragonPhase:6},nbt=!{DragonPhase:7},nbt=!{DragonPhase:3}] run scoreboard players set @s PerchTimer 100
+    execute if score FrequentPerching DragonAISettings matches 1 unless entity @s[nbt=!{DragonPhase:4},nbt=!{DragonPhase:5},nbt=!{DragonPhase:6},nbt=!{DragonPhase:7},nbt=!{DragonPhase:3}] store result score @s PerchTimer run random value 60..240
 
     # Replace vanilla charging, if enabled
     execute if score ReplaceVanillaCharging DragonAISettings matches 1 if entity @s[nbt={DragonPhase:8}] unless entity @s[nbt=!{HurtTime:0s}] unless score @s DragonChargeTimer matches 1.. run scoreboard players set @s DragonChargeTimer 4
@@ -366,7 +366,7 @@ function load minecraft:load {
     execute positioned 0 0 0 in minecraft:the_end unless entity @e[type=marker,tag=center,distance=0..] run summon marker ~ ~ ~ {Tags:["center"]}
     verbose debug "Finished"
     verbose debug "Running Old Combat Datapack Check"
-    function dragonai:misc/detect-oldcombat
+    # function dragonai:misc/detect-oldcombat
     # MC-Build objective
     verbose debug "Creating MCB Internal scoreboard"
     scoreboard objectives add mcb.internal dummy
@@ -441,6 +441,8 @@ function load minecraft:load {
     scoreboard players set DisablePerching DragonAISettings 0
     # Setting to disable vanilla charging.
     scoreboard players set DisableVanillaCharge DragonAISettings 0
+    # Setting to disable vanilla's annoying phase 10 that is applied when /summon or a spawn egg is used to spawn the dragon
+    scoreboard players set DisablePhase10 DragonAISettings 0
     # Setting to enable debugging stuff.
     scoreboard players set EnableDebug DragonAISettings 0
 
@@ -546,7 +548,11 @@ function tick minecraft:tick {
     execute as @e[type=marker,tag=center] at @s positioned over motion_blocking run tp ~ ~ ~
     execute if score BedrockAEClouds DragonAISettings matches 1 as @e[type=area_effect_cloud] at @s run function dragonai:bedrockareaeffectcloudinit
     # scoreboard players enable @a odconfig
+    
 }
+
+
+
 
 function velocitymarker {
     # Tick this dragon's velocity marker, and spawn it if it doesn't exist
