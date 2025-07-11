@@ -9,6 +9,9 @@ execute at @s facing entity @e[type=marker,limit=1,sort=nearest,tag=DragonCharge
 execute store result score @s TargetXVel run data get entity @e[limit=1,sort=nearest,type=marker,tag=TargetVelHoriz] Pos[0] 1000
 $execute store result score @s TargetYVel run data get entity @e[limit=1,sort=nearest,type=marker,tag=TargetVelVert] Pos[1] $(ChargeFlySpeed)
 execute store result score @s TargetZVel run data get entity @e[limit=1,sort=nearest,type=marker,tag=TargetVelHoriz] Pos[2] 1000
+execute if data entity @s {HurtTime:10s} store result score @s XVel run data get entity @s Motion[0] 1000
+execute if data entity @s {HurtTime:10s} store result score @s YVel run data get entity @s Motion[1] 1000
+execute if data entity @s {HurtTime:10s} store result score @s ZVel run data get entity @s Motion[2] 1000
 scoreboard players operation @s XVelDiff = @s TargetXVel
 scoreboard players operation @s XVelDiff -= @s XVel
 scoreboard players operation @s XVelDiff *= SM Temp

@@ -34,6 +34,9 @@ dir charging {
         $execute store result score @s TargetYVel run data get entity @e[limit=1,sort=nearest,type=marker,tag=TargetVelVert] Pos[1] $(ChargeFlySpeed)
         execute store result score @s TargetZVel run data get entity @e[limit=1,sort=nearest,type=marker,tag=TargetVelHoriz] Pos[2] 1000
 
+        execute if data entity @s {HurtTime:10s} store result score @s XVel run data get entity @s Motion[0] 1000
+        execute if data entity @s {HurtTime:10s} store result score @s YVel run data get entity @s Motion[1] 1000
+        execute if data entity @s {HurtTime:10s} store result score @s ZVel run data get entity @s Motion[2] 1000
 
         scoreboard players operation @s XVelDiff = @s TargetXVel
         scoreboard players operation @s XVelDiff -= @s XVel
@@ -50,12 +53,14 @@ dir charging {
         scoreboard players operation @s ZVelDiff *= SM Temp
         scoreboard players operation @s ZVelDiff /= HorizontalSmoothing DragonAISettings
 
+        
         execute store result entity @s Motion[0] double 0.001 run scoreboard players operation @s XVel += @s XVelDiff
         execute store result entity @s Motion[1] double 0.001 run scoreboard players operation @s YVel += @s YVelDiff
         execute store result entity @s Motion[2] double 0.001 run scoreboard players operation @s ZVel += @s ZVelDiff
         execute store result entity @s Pos[0] double 0.001 run scoreboard players operation @s ChargeX += @s XVel
         execute store result entity @s Pos[1] double 0.001 run scoreboard players operation @s ChargeY += @s YVel
         execute store result entity @s Pos[2] double 0.001 run scoreboard players operation @s ChargeZ += @s ZVel
+
         
         function ../velocitymarker
         # execute store result entity @s Rotation[0] float 0.01 run scoreboard players get @s Rotation
@@ -310,10 +315,10 @@ function ai {
 
 
     # Stop charging if too far away from target position or is done charging
-    execute at @s if entity @e[limit=1,sort=nearest,distance=..10,tag=DragonChargeTarget] if score @s DragonChargeTimer matches 1 run {
+    execute at @s if entity @e[limit=1,sort=nearest,distance=..3,tag=DragonChargeTarget] if score @s DragonChargeTimer matches 1 run {
         verbose debug ["Dragon ",{selector:"@s"}," ended charge with reason: Reached Target"]
     }
-    execute at @s if entity @e[limit=1,sort=nearest,distance=..10,tag=DragonChargeTarget] if score @s DragonChargeTimer matches 1.. run scoreboard players remove @s DragonChargeTimer 1
+    execute at @s if entity @e[limit=1,sort=nearest,distance=..3,tag=DragonChargeTarget] if score @s DragonChargeTimer matches 1.. run scoreboard players remove @s DragonChargeTimer 1
     execute unless score UseEnhancedAI DragonAISettings matches 1 at @s unless entity @e[type=marker,tag=DragonChargeTarget] if score @s DragonChargeTimer matches 1.. run {
         verbose debug ["Dragon ",{selector:"@s"}," ended charge with reason: Invalid Target"]
     }

@@ -6,7 +6,7 @@ tellraw @a {"text":"Customizable Dragon AI is loading...","color":"yellow"}
 execute positioned 0 0 0 in minecraft:overworld unless entity @e[type=marker,tag=center,distance=0..] run summon marker ~ ~ ~ {Tags:["center"]}
 execute positioned 0 0 0 in minecraft:the_nether unless entity @e[type=marker,tag=center,distance=0..] run summon marker ~ ~ ~ {Tags:["center"]}
 execute positioned 0 0 0 in minecraft:the_end unless entity @e[type=marker,tag=center,distance=0..] run summon marker ~ ~ ~ {Tags:["center"]}
-function dragonai:misc/detect-oldcombat
+# function dragonai:misc/detect-oldcombat
 # MC-Build objective
 scoreboard objectives add mcb.internal dummy
 # Create the objectives
@@ -73,6 +73,8 @@ scoreboard players set FrequentPerching DragonAISettings 0
 scoreboard players set DisablePerching DragonAISettings 0
 # Setting to disable vanilla charging.
 scoreboard players set DisableVanillaCharge DragonAISettings 0
+# Setting to disable vanilla's annoying phase 10 that is applied when /summon or a spawn egg is used to spawn the dragon
+scoreboard players set DisablePhase10 DragonAISettings 0
 # Setting to enable debugging stuff.
 scoreboard players set EnableDebug DragonAISettings 0
 # Setting to fix the dragon's vertical movement

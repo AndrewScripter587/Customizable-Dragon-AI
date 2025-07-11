@@ -39,7 +39,7 @@ execute at @s if score @s DragonChargeTimer matches ..0 store result score @s Ch
 execute if score FrequentPerching DragonAISettings matches 1 if entity @s[nbt=!{DragonPhase:4},nbt=!{DragonPhase:5},nbt=!{DragonPhase:6},nbt=!{DragonPhase:7},nbt=!{DragonPhase:3},nbt=!{DragonPhase:9}] if score @s PerchTimer matches 1.. unless score @s DragonChargeTimer matches 1.. run scoreboard players remove @s PerchTimer 1
 execute if score FrequentPerching DragonAISettings matches 1 if entity @s[nbt=!{DragonPhase:4},nbt=!{DragonPhase:5},nbt=!{DragonPhase:6},nbt=!{DragonPhase:7},nbt=!{DragonPhase:3},nbt=!{DragonPhase:9}] if score @s RNG matches 980..1000 unless score @s DragonChargeTimer matches 1.. if score @s PerchTimer matches ..0 run data modify entity @s[type=ender_dragon] DragonPhase set value 2
 execute if score FrequentPerching DragonAISettings matches 1 if entity @s[nbt=!{DragonPhase:4},nbt=!{DragonPhase:5},nbt=!{DragonPhase:6},nbt=!{DragonPhase:7},nbt=!{DragonPhase:3},nbt=!{DragonPhase:9}] if score @s RNG matches 980..1000 unless score @s DragonChargeTimer matches 1.. if score @s PerchTimer matches ..0 run function dragonai:zzz/3
-execute if score FrequentPerching DragonAISettings matches 1 unless entity @s[nbt=!{DragonPhase:4},nbt=!{DragonPhase:5},nbt=!{DragonPhase:6},nbt=!{DragonPhase:7},nbt=!{DragonPhase:3}] run scoreboard players set @s PerchTimer 100
+execute if score FrequentPerching DragonAISettings matches 1 unless entity @s[nbt=!{DragonPhase:4},nbt=!{DragonPhase:5},nbt=!{DragonPhase:6},nbt=!{DragonPhase:7},nbt=!{DragonPhase:3}] store result score @s PerchTimer run random value 60..240
 # Replace vanilla charging, if enabled
 execute if score ReplaceVanillaCharging DragonAISettings matches 1 if entity @s[nbt={DragonPhase:8}] unless entity @s[nbt=!{HurtTime:0s}] unless score @s DragonChargeTimer matches 1.. run scoreboard players set @s DragonChargeTimer 4
 execute if score ReplaceVanillaCharging DragonAISettings matches 1 if entity @s[nbt={DragonPhase:8}] unless entity @s[nbt=!{HurtTime:0s}] unless score @s DragonChargeTimer matches 1.. run function dragonai:zzz/4
@@ -81,8 +81,8 @@ execute if data entity @s {DragonPhase:1} at @s run tag @p[distance=..125,gamemo
 execute if data entity @s {DragonPhase:3} at @s run tag @e[type=marker,limit=1,tag=center,sort=nearest,distance=0..] add DragonTarget
 execute if data entity @s {DragonPhase:9} at @s run tag @e[type=marker,limit=1,tag=center,sort=nearest,distance=0..] add DragonTarget
 # Stop charging if too far away from target position or is done charging
-execute at @s if entity @e[limit=1,sort=nearest,distance=..10,tag=DragonChargeTarget] if score @s DragonChargeTimer matches 1 run function dragonai:zzz/8
-execute at @s if entity @e[limit=1,sort=nearest,distance=..10,tag=DragonChargeTarget] if score @s DragonChargeTimer matches 1.. run scoreboard players remove @s DragonChargeTimer 1
+execute at @s if entity @e[limit=1,sort=nearest,distance=..3,tag=DragonChargeTarget] if score @s DragonChargeTimer matches 1 run function dragonai:zzz/8
+execute at @s if entity @e[limit=1,sort=nearest,distance=..3,tag=DragonChargeTarget] if score @s DragonChargeTimer matches 1.. run scoreboard players remove @s DragonChargeTimer 1
 execute unless score UseEnhancedAI DragonAISettings matches 1 at @s unless entity @e[type=marker,tag=DragonChargeTarget] if score @s DragonChargeTimer matches 1.. run function dragonai:zzz/9
 execute unless score UseEnhancedAI DragonAISettings matches 1 at @s unless entity @e[limit=1,sort=nearest,distance=..125,tag=DragonChargeTarget] if entity @e[type=marker,tag=DragonChargeTarget] if score @s DragonChargeTimer matches 1.. run function dragonai:zzz/10
 execute unless score UseEnhancedAI DragonAISettings matches 1 at @s unless entity @e[limit=1,sort=nearest,distance=..125,tag=DragonChargeTarget] run scoreboard players set @s DragonChargeTimer 0
