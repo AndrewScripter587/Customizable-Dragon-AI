@@ -348,6 +348,7 @@ function bedrockareaeffectcloudinit {
 }
 
 tag entity_type dragon_charge_at {
+    minecraft:zombie
 }
 
 function enable {
